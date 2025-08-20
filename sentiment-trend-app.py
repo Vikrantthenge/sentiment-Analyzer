@@ -4,6 +4,40 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from transformers import pipeline
 
+
+# 📄 Page config
+st.set_page_config(page_title="Sentiment Trend Analyzer", layout="wide")
+
+# 📢 Instructions
+st.markdown("""
+### 📊 Sentiment Trend Analyzer
+Upload your own CSV file or use the sample dataset provided.
+
+**Required CSV Format:**
+- `date`: Date of the entry (e.g., 2023-08-20)
+- `text`: Text content to analyze
+
+👉 You can also [download the sample CSV](https://github.com/Vikrantthenge/sentiment-Analyzer/blob/main/sentiment_sample.csv) to see the format.
+""")
+
+# 📁 File uploader
+uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+
+# 📦 Load data
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+else:
+    df = pd.read_csv("sentiment_sample.csv")  # Make sure this file is in your repo
+
+# ✅ Validate columns
+required_columns = {"date", "text"}
+if not required_columns.issubset(df.columns):
+    st.error("❌ CSV must contain 'date' and 'text' columns.")
+    st.stop()
+
+# 👇 Proceed with sentiment analysis below this line
+# Example: st.write(df.head())
+
 # 🧠 Page Config with Logo + Favicon
 st.set_page_config(
     page_title="Sentiment Trend Analyzer",
