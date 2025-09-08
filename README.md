@@ -1,4 +1,4 @@
-# 🧠 Sentiment Analyzer App
+# 🧠 Airline Sentiment Analyzer App
 
 [![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-FF4B4B?logo=streamlit)](https://streamlit.io/)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)](https://www.python.org/)
