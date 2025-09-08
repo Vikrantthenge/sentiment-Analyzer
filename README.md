@@ -1,38 +1,45 @@
-# 🧠 Airline Sentiment Analyzer App
+# ✈️ Airline Sentiment Analyzer
 
-[![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-FF4B4B?logo=streamlit)](https://streamlit.io/)
-[![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![App Status](https://img.shields.io/badge/Live%20App-Click%20to%20Launch-brightgreen)](https://sentiment-analyzer-vikrant.streamlit.app/)
-[![Creator](https://img.shields.io/badge/By-Vikrant%20Thenge-blueviolet)](https://github.com/vikrantthenge)
+[![Live App](https://img.shields.io/badge/Streamlit-Live_App-00C853?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)
+[![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
 
-## 🔍 Overview
+---
 
-This app performs real-time sentiment analysis on user-input text using a pre-trained NLP model. It classifies input as **Positive**, **Negative**, or **Neutral**, and visualizes confidence scores with intuitive charts.
+## 🧠 Overview
 
-Ideal for showcasing NLP capabilities, text classification, and interactive dashboarding using Streamlit.
+A recruiter-facing NLP dashboard built with Streamlit to analyze airline customer feedback.  
+It applies sentiment analysis to passenger reviews and visualizes trends for CX teams, route planners, and service recovery leads.
+
+---
 
 ## 🚀 Features
 
-- 🔤 Text input with instant sentiment prediction
-- 📊 Confidence score visualization via Plotly
-- 🧠 Pre-trained model using Scikit-learn & NLP pipeline
-- 🧪 Clean UI with real-time feedback
-- 📱 Mobile-friendly layout for recruiters on the go
+- ✅ Sentiment Analysis using HuggingFace Transformers  
+- 📈 Trendline with red/blue polarity mapping  
+- 📊 Diverging Bar Chart for sentiment swings  
+- 🧠 Word Cloud for frequent negative keywords  
+- ✈️ Airline Filter to isolate carrier-specific feedback  
+- ⚠️ CX Alert System for spikes in negative sentiment  
+- 📁 Upload your own CSV or use the default demo file  
+- 🎨 Animated branding, sidebar polish, and footer badges
 
-## 🛠️ Tech Stack
+---
 
-- **Python** · **Scikit-learn** · **NLTK** · **Streamlit** · **Plotly**
-- Modular codebase with caching for performance
+## 📦 Tech Stack
 
-## 📸 Screenshots
+- **Streamlit** for UI  
+- **Transformers (DistilBERT)** for sentiment analysis  
+- **Plotly** for interactive charts  
+- **Matplotlib & WordCloud** for visual NLP  
+- **Pandas** for data wrangling
 
-> Add 2–3 screenshots here showing input, prediction, and chart output. Use clean headers and mobile view if possible.
+---
 
-## 📦 Installation
+## 📄 Sample CSV Format
 
-```bash
-git clone https://github.com/vikrantthenge/sentiment-analyzer
-cd sentiment-analyzer
-pip install -r requirements.txt
-streamlit run app.py
+```csv
+date,airline,text
+01-06-2025,Indigo,Amazing experience! Flight was on time and crew was very friendly.
+02-06-2025,Air India,Worst flight ever. Extremely delayed and no communication.
+...
