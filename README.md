@@ -3,7 +3,7 @@
 [![Live App](https://img.shields.io/badge/Streamlit-Live_App-00C853?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
-[![CI Status](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment-ci.yml/badge.svg?branch=main)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment-ci.yml)
+[![CI Status](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment-ci.yml/badge.svg?branch=main)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/runs/17580510830)
 
 ---
 
