@@ -76,8 +76,8 @@ else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
 
-# 📈 Sentiment Trend Over Time (Smoothed for clarity)
-st.markdown("### 📈 Sentiment Over Time")
+# 📈 Sentiment Trend Over Time (pivoted for full visibility)
+st.markdown("### 📈 Sentiment Trend Over Time")
 
 if "date" in df.columns:
     df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
@@ -96,50 +96,58 @@ if "date" in df.columns:
             x="date",
             y="count",
             color="sentiment",
-            title="📈 Sentiment Over Time",
-            line_shape="spline",
-            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson"},
-            template="plotly_white"
+            title="Sentiment Over Time",
+            color_discrete_map={
+                "POSITIVE": "blue",
+                "NEGATIVE": "crimson"
+            }
         )
-        fig_trend.update_layout(hovermode="x unified")
+        fig_trend.update_traces(mode="lines+markers")  # adds points on lines
+        fig_trend.update_layout(
+            legend_title_text="Sentiment",
+            yaxis_title="Count",
+            xaxis_title="Date"
+        )
         st.plotly_chart(fig_trend, use_container_width=True)
 else:
     st.info("No date column found. Trendline skipped.")
 
-# 📊 Stacked Sentiment Bar Chart
-st.markdown("### 📊 Sentiment Breakdown by Date")
+# 📊 Diverging Bar Chart for Sentiment by Date
+st.markdown("### 📊 Diverging Sentiment Bar Chart")
 
-div_df = df_trend.groupby(["date", "sentiment"]).size().reset_index(name="count")
-fig_stack = px.bar(
-    div_df,
+div_df = df_trend.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
+div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
+div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
+
+div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+
+fig_diverge = px.bar(
+    div_melted,
     x="date",
     y="count",
     color="sentiment",
-    title="📊 Sentiment Breakdown by Date",
+    title="Diverging Sentiment by Date",
     color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
-    barmode="stack",
-    template="plotly_white"
+    barmode="relative"
 )
-fig_stack.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
-st.plotly_chart(fig_stack, use_container_width=True)
+fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
+st.plotly_chart(fig_diverge)
 
-# 📊 Sentiment Distribution (Interactive Pie Chart)
-st.markdown("### 📊 Overall Sentiment Distribution")
+# ✈️ Airline Filter
+selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
+df = df[df["airline"] == selected_airline]
 
+# 📊 Sentiment Distribution
+st.markdown("### 📊 Sentiment Distribution")
 sentiment_counts = df["sentiment"].value_counts()
-fig_pie = px.pie(
-    names=sentiment_counts.index,
-    values=sentiment_counts.values,
-    title="📊 Sentiment Distribution",
-    color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
-    template="plotly_white"
-)
-st.plotly_chart(fig_pie, use_container_width=True)
+fig2, ax2 = plt.subplots()
+ax2.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', startangle=90,
+        colors=['#66b3ff', '#ff6666', '#ffcc99'])
+ax2.axis('equal')
+st.pyplot(fig2, use_container_width=True)
 
-# 🧠 Word Cloud Toggle for Frequent Keywords
-st.markdown("### 🧠 Frequent Keywords by Sentiment")
-
-sentiment_focus = st.radio("Choose sentiment for word cloud:", ["NEGATIVE", "POSITIVE"])
+# 🧠 Word Cloud for Negative Sentiment
+st.markdown("### 🧠 Frequent Negative Keywords")
 
 custom_stopwords = set(STOPWORDS)
 custom_stopwords.update([
@@ -149,17 +157,17 @@ custom_stopwords.update([
     "good", "bad", "okay", "delay", "delayed", "late", "on", "off", "get", "got"
 ])
 
-text_series = df[df["sentiment"] == sentiment_focus][selected_text_col].dropna().astype(str)
+neg_text_series = df[df["sentiment"] == "NEGATIVE"][selected_text_col].dropna().astype(str)
 
 tokens = []
-for text in text_series:
+for text in neg_text_series:
     words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
     filtered = [word for word in words if word not in custom_stopwords]
     tokens.extend(filtered)
 
-word_text = " ".join(tokens)
+neg_text = " ".join(tokens)
 
-if word_text.strip():
+if neg_text.strip():
     wordcloud = WordCloud(
         width=800,
         height=400,
@@ -167,15 +175,14 @@ if word_text.strip():
         stopwords=custom_stopwords,
         collocations=False,
         max_words=100
-    ).generate(word_text)
+    ).generate(neg_text)
 
     fig_wc, ax_wc = plt.subplots(figsize=(10, 5))
     ax_wc.imshow(wordcloud, interpolation='bilinear')
     ax_wc.axis("off")
     st.pyplot(fig_wc, use_container_width=True)
 else:
-    st.info(f"No {sentiment_focus.lower()} sentiment found for this airline.")
-
+    st.info("No negative sentiment found for this airline.")
 
 # ⚠️ CX Alert Section
 st.markdown("### ⚠️ CX Alert")
