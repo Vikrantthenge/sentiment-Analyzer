@@ -1,3 +1,81 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from transformers import pipeline
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+import random
+import re
+
+# 🌐 Page Config
+st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
+
+# 🖼️ Logo + Animated Header
+st.markdown("""
+<style>
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink { 50% { border-color: transparent } }
+.typing-header {
+  font-size: 32px; font-weight: bold; white-space: nowrap;
+  overflow: hidden; border-right: 3px solid #0078D4;
+  width: 0; animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+  color: #0078D4; margin-bottom: 20px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.image("logo.png", width=100)
+with col2:
+    st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
+
+# 📘 Sidebar Branding
+with st.sidebar:
+    st.header("📘 About")
+    st.markdown("""
+    This dashboard helps **airline customer experience teams** monitor passenger sentiment using NLP.  
+    It analyzes feedback across carriers and visualizes trends to support **CX decisions**, **route planning**, and **service recovery**.
+    """)
+    st.info("📌 Tip: Upload a CSV with a column like 'text', 'review', or 'comments' containing customer feedback.")
+
+# 📂 File Upload or Default
+st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
+uploaded_file = st.file_uploader("Upload airline_reviews.csv", type=["csv"])
+
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+    st.success("✅ Custom file uploaded successfully.")
+else:
+    df = pd.read_csv("airline_feedback.csv")
+    st.info("ℹ️ Using default demo file: airline_feedback.csv")
+
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline_feedback.csv")
+
+# ✈️ Simulate airline column if missing
+if "airline" not in df.columns:
+    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara"]) for _ in range(len(df))]
+
+# 🧠 Sentiment Analysis
+sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+
+text_candidates = [col for col in df.columns if df[col].dtype == "object" and df[col].str.len().mean() > 30]
+default_text_col = "text" if "text" in df.columns else (text_candidates[0] if text_candidates else None)
+
+if default_text_col:
+    st.markdown("### 📝 Select Text Column for Sentiment Analysis")
+    selected_text_col = st.selectbox("Choose column containing customer feedback:", df.columns, index=df.columns.get_loc(default_text_col))
+
+    try:
+        df["sentiment"] = df[selected_text_col].apply(lambda x: sentiment_pipeline(str(x))[0]["label"].upper())
+    except Exception as e:
+        st.error("❌ Error applying sentiment analysis. Please check if the selected column contains valid text.")
+        st.exception(e)
+        st.stop()
+else:
+    st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
+    st.stop()
+
 # 📈 Sentiment Trend Over Time (Smoothed for clarity)
 st.markdown("### 📈 Sentiment Over Time")
 
