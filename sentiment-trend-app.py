@@ -150,14 +150,21 @@ fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
 st.plotly_chart(fig_diverge)
 
 # ✈️ Airline Filter
-df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", regex=True).str.title()
-selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
+
+# ✈️ Normalize airline names for dropdown visibility
+df["airline"] = df["airline"].astype(str).str.strip()
+
+# 🔧 Manual mapping to standardize Akasa and AirAsia
+airline_map = {
+    "Air Asia": "AirAsia",
+    "Air Asia India": "AirAsia",
+    "Akasa Air": "Akasa",
+    "Akasa Airlines": "Akasa"
+}
+df["airline"] = df["airline"].replace(airline_map)
+selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
 df = df[df["airline"] == selected_airline]
 
-expected_airlines = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]
-unexpected = [air for air in df["airline"].unique() if air not in expected_airlines]
-if unexpected:
-    st.warning(f"⚠️ Unexpected airline names found: {unexpected}")
 
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
