@@ -59,7 +59,7 @@ else:
         st.error("❌ Default file not found. Please upload a CSV file.")
         st.stop()
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-review.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
