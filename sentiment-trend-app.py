@@ -268,4 +268,13 @@ st.markdown("""
 
 st.markdown("[🚀 Live App](https://sentiment-analyzer-vikrant.streamlit.app)")
 
+# Blue badge
+[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit-blue?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+
+# Black badge
+[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit-black?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+
+# Minimal emoji-only badge
+[![🚀](https://img.shields.io/badge/-Live_App-green)](https://sentiment-analyzer-vikrant.streamlit.app)
+
                                  
