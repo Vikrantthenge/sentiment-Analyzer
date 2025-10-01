@@ -1,9 +1,11 @@
-# ✈️ Airline Sentiment Analyzer
+## ✈️ Airline Sentiment Analyzer
 
-[![Live App](https://img.shields.io/badge/Streamlit-Live_App-00C853?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+**Built by Vikrant Thenge — NLP Strategist & Dashboard Architect**  
+📍 Mumbai-based | 🎯 Recruiter-Facing | 🧠 CX Intelligence
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
-[![Sentiment Analyzer CI](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml/badge.svg)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml)
+[![CI Status](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml/badge.svg)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml)
 
 ---
 
