@@ -267,10 +267,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-st.markdown("""
-[![Live App](https://img.shields.io/badge/Live_App-Streamlit-blue?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
-""", unsafe_allow_html=True)
-
+st.markdown("---")
+st.markdown("**🔍 Powered by NLP & CX Intelligence — Built for Airline Feedback Precision.**")
+st.markdown("🔐 This dashboard analyzes anonymized feedback only. No personal data is stored.")
+st.markdown("🛠️ Version: v1.0 | 📅 Last Updated: October 2025")
 
 
 
