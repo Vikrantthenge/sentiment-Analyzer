@@ -40,23 +40,18 @@ with st.sidebar:
     """)
     st.info("📌 Tip: Upload a CSV with a column like 'text', 'review', or 'comments' containing customer feedback.")
 
-# 📂 File Upload or Default
-st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
-DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
-
+# 📂 File Upload
+st.markdown("### 📄 Upload Your Own CSV")
 uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
+
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Custom file uploaded successfully.")
 else:
-    try:
-        df = pd.read_csv(DEFAULT_CSV_URL)
-        st.info("ℹ️ Using default demo file from GitHub")
-    except Exception:
-        st.error("❌ Default file not found. Please upload a CSV file.")
-        st.stop()
+    st.error("❌ Default file not found. Please upload a CSV file.")
+    st.stop()
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "N/A")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -71,97 +66,69 @@ try:
         model="distilbert-base-uncased-finetuned-sst-2-english"
     )
     huggingface_available = True
-except Exception:
-    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+except Exception as e:
+    st.warning("⚠️ Hugging Face model failed. Using VADER fallback.")
     huggingface_available = False
-    analyzer = SentimentIntensityAnalyzer()
+    vader_analyzer = SentimentIntensityAnalyzer()
 
+# Select text column
 text_candidates = [col for col in df.columns if df[col].dtype == "object" and df[col].str.len().mean() > 30]
 default_text_col = "text" if "text" in df.columns else (text_candidates[0] if text_candidates else None)
 
 if default_text_col:
     st.markdown("### 📝 Select Text Column for Sentiment Analysis")
     selected_text_col = st.selectbox("Choose column containing customer feedback:", df.columns, index=df.columns.get_loc(default_text_col))
-
-    try:
-        if huggingface_available:
-            df["sentiment"] = df[selected_text_col].apply(lambda x: sentiment_pipeline(str(x))[0]["label"].upper())
-        else:
-            def vader_sentiment(text):
-                score = analyzer.polarity_scores(str(text))['compound']
-                return "POSITIVE" if score >= 0.05 else "NEGATIVE" if score <= -0.05 else "NEUTRAL"
-            df["sentiment"] = df[selected_text_col].apply(vader_sentiment)
-    except Exception as e:
-        st.error("❌ Error applying sentiment analysis. Please check if the selected column contains valid text.")
-        st.exception(e)
-        st.stop()
 else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
 
-# ✈️ Normalize airline names for dropdown visibility
-df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", regex=True).str.title()
+# Apply sentiment
+def get_sentiment(text):
+    if huggingface_available:
+        try:
+            return sentiment_pipeline(str(text))[0]["label"].upper()
+        except:
+            # fallback to VADER if HF fails
+            score = vader_analyzer.polarity_scores(str(text))['compound']
+    else:
+        score = vader_analyzer.polarity_scores(str(text))['compound']
+    return "POSITIVE" if score >= 0.05 else "NEGATIVE" if score <= -0.05 else "NEUTRAL"
 
-# 🔧 Manual mapping to standardize Akasa and AirAsia
-airline_map = {
-    "Air Asia": "AirAsia",
-    "Air Asia India": "AirAsia",
-    "Akasa Air": "Akasa",
-    "Akasa Airlines": "Akasa"
-}
+df["sentiment"] = df[selected_text_col].apply(get_sentiment)
+
+# ✈️ Normalize airline names
+df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", regex=True).str.title()
+airline_map = {"Air Asia": "AirAsia", "Air Asia India": "AirAsia", "Akasa Air": "Akasa", "Akasa Airlines": "Akasa"}
 df["airline"] = df["airline"].replace(airline_map)
 
 # ✈️ Airline Filter
 selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
 df = df[df["airline"] == selected_airline]
 
-# 📈 Sentiment Trend Over Time (Stacked Area)
+# 📈 Sentiment Trend Over Time (Stacked Area Chart)
 st.markdown("### 📈 Sentiment Trend Over Time")
 if "date" in df.columns:
     df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
     df = df[df["date"].notna()]
-    df_trend = df.copy()
-    
-    grouped = df_trend.groupby(["date", "sentiment"]).size().reset_index(name="count")
-    pivot_df = grouped.pivot(index="date", columns="sentiment", values="count").fillna(0)
-    pivot_df = pivot_df.reset_index().melt(id_vars="date", var_name="sentiment", value_name="count")
-
-    if pivot_df.empty:
-        st.info("Not enough data to show sentiment trend.")
-    else:
-        fig_trend = px.area(
-            pivot_df,
-            x="date",
-            y="count",
-            color="sentiment",
-            title="Sentiment Over Time",
-            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "gray"}
-        )
+    if not df.empty:
+        trend_df = df.groupby(["date", "sentiment"]).size().reset_index(name="count")
+        fig_trend = px.area(trend_df, x="date", y="count", color="sentiment",
+                            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "grey"},
+                            title=f"Sentiment Trend for {selected_airline}")
         st.plotly_chart(fig_trend, use_container_width=True)
 else:
     st.info("No date column found. Trendline skipped.")
 
-# 📊 Diverging Sentiment Bar Chart (Horizontal)
-st.markdown("### 📊 Diverging Sentiment by Date")
-if "date" in df.columns:
-    div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
-    div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
-    div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
-    div_df["NEUTRAL"] = div_df.get("NEUTRAL", 0)  # optional
-    
-    div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
-
-    fig_diverge = px.bar(
-        div_melted,
-        y="date",
-        x="count",
-        color="sentiment",
-        title="Diverging Sentiment by Date",
-        color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
-        barmode="relative"
-    )
-    fig_diverge.update_layout(yaxis_title="Date", xaxis_title="Sentiment Count")
-    st.plotly_chart(fig_diverge)
+# 📊 Diverging Sentiment Heatmap
+st.markdown("### 📊 Diverging Sentiment Heatmap")
+if "date" in df.columns and not df.empty:
+    heat_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0)
+    heat_df = heat_df.reindex(columns=["POSITIVE", "NEGATIVE", "NEUTRAL"], fill_value=0)
+    fig_heat = px.imshow(heat_df.T, labels=dict(x="Date", y="Sentiment", color="Count"),
+                         x=heat_df.index, y=heat_df.columns,
+                         color_continuous_scale="RdBu", aspect="auto",
+                         title=f"Diverging Sentiment Heatmap for {selected_airline}")
+    st.plotly_chart(fig_heat, use_container_width=True)
 
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
@@ -174,35 +141,25 @@ st.pyplot(fig2, use_container_width=True)
 
 # 🧠 Word Cloud for Negative Sentiment
 st.markdown("### 🧠 Frequent Negative Keywords")
-custom_stopwords = set(STOPWORDS)
-custom_stopwords.update([
-    "positive", "negative", "neutral",
-    "POSITIVE", "NEGATIVE", "NEUTRAL",
-    "experience", "service", "flight", "airline",
-    "good", "bad", "okay", "delay", "delayed", "late", "on", "off", "get", "got"
-])
-
+custom_stopwords = set(STOPWORDS).union(["positive","negative","neutral","POSITIVE","NEGATIVE","NEUTRAL",
+                                         "experience","service","flight","airline","good","bad","okay","delay","delayed","late","on","off","get","got"])
 neg_text_series = df[df["sentiment"] == "NEGATIVE"][selected_text_col].dropna().astype(str)
 tokens = []
 for text in neg_text_series:
     words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
-    filtered = [word for word in words if word not in custom_stopwords]
-    tokens.extend(filtered)
-
+    tokens.extend([w for w in words if w not in custom_stopwords])
 neg_text = " ".join(tokens)
 if neg_text.strip():
-    wordcloud = WordCloud(
-        width=800, height=400, background_color='white',
-        stopwords=custom_stopwords, collocations=False, max_words=100
-    ).generate(neg_text)
-    fig_wc, ax_wc = plt.subplots(figsize=(10, 5))
+    wordcloud = WordCloud(width=800, height=400, background_color='white',
+                          stopwords=custom_stopwords, collocations=False, max_words=100).generate(neg_text)
+    fig_wc, ax_wc = plt.subplots(figsize=(10,5))
     ax_wc.imshow(wordcloud, interpolation='bilinear')
     ax_wc.axis("off")
     st.pyplot(fig_wc, use_container_width=True)
 else:
     st.info("No negative sentiment found for this airline.")
 
-# ⚠️ CX Alert Section
+# ⚠️ CX Alert
 st.markdown("### ⚠️ CX Alert")
 neg_count = sentiment_counts.get("NEGATIVE", 0)
 if neg_count > 10:
@@ -210,7 +167,7 @@ if neg_count > 10:
 else:
     st.success("No major negative sentiment spike detected.")
 
-# 📌 Footer Branding
+# 📌 Footer
 st.markdown("---")
 st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
 st.markdown("""
