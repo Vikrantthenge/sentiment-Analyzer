@@ -268,13 +268,16 @@ st.markdown("""
 
 st.markdown("[🚀 Live App](https://sentiment-analyzer-vikrant.streamlit.app)")
 
-# Blue badge
-st.markdown[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit-blue?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+st.markdown("""
+[![Live App](https://img.shields.io/badge/Live_App-Streamlit-blue?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+""", unsafe_allow_html=True)
 
-# Black badge
-st.markdown[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit-black?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+st.markdown("""
+[![Live App](https://img.shields.io/badge/Live_App-Streamlit-black?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+""", unsafe_allow_html=True)
 
-# Minimal emoji-only badge
-st.markdown[![🚀](https://img.shields.io/badge/-Live_App-green)](https://sentiment-analyzer-vikrant.streamlit.app)
+st.markdown("""
+[![🚀](https://img.shields.io/badge/-Live_App-green)](https://sentiment-analyzer-vikrant.streamlit.app)
+""", unsafe_allow_html=True)
 
                                  
