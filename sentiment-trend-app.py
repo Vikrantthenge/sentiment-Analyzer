@@ -47,14 +47,16 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Custom file uploaded successfully.")
 else:
-    df = pd.read_csv("airline_feedback.csv")
-    st.info("ℹ️ Using default demo file: airline_feedback.csv")
+    df = pd.read_csv("airline-review.csv")
+    st.info("ℹ️ Using default demo file: airline-review.csv")
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline_feedback.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
-    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]) for _ in range(len(df))]
+    df["airline"] = [random.choice(
+        ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]
+    ) for _ in range(len(df))]
 
 # 🧠 Sentiment Analysis
 sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
@@ -87,6 +89,10 @@ airline_map = {
     "Akasa Airlines": "Akasa"
 }
 df["airline"] = df["airline"].replace(airline_map)
+
+# ✈️ Airline Filter
+selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
+df = df[df["airline"] == selected_airline]
 
 # 📈 Sentiment Trend Over Time
 st.markdown("### 📈 Sentiment Trend Over Time")
@@ -127,27 +133,24 @@ else:
 # 📊 Diverging Bar Chart
 st.markdown("### 📊 Diverging Sentiment Bar Chart")
 
-div_df = df_trend.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
-div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
-div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
+if "date" in df.columns:
+    div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
+    div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
+    div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
 
-div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+    div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
 
-fig_diverge = px.bar(
-    div_melted,
-    x="date",
-    y="count",
-    color="sentiment",
-    title="Diverging Sentiment by Date",
-    color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
-    barmode="relative"
-)
-fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
-st.plotly_chart(fig_diverge)
-
-# ✈️ Airline Filter
-selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
-df = df[df["airline"] == selected_airline]
+    fig_diverge = px.bar(
+        div_melted,
+        x="date",
+        y="count",
+        color="sentiment",
+        title="Diverging Sentiment by Date",
+        color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
+        barmode="relative"
+    )
+    fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
+    st.plotly_chart(fig_diverge)
 
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
