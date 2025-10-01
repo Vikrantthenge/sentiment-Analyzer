@@ -6,9 +6,11 @@ from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 import random
 import re
-import torch
-import nltk
+
+# For VADER fallback
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+nltk.download('vader_lexicon')
 
 # 🌐 Page Config
 st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
@@ -50,10 +52,14 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Custom file uploaded successfully.")
 else:
-    df = pd.read_csv("airline-reviews.csv")
-    st.info("ℹ️ Using default demo file: airline-review.csv")
+    try:
+        df = pd.read_csv("airline-review.csv")
+        st.info("ℹ️ Using default demo file: airline-review.csv")
+    except FileNotFoundError:
+        st.error("❌ Default file not found. Please upload a CSV file.")
+        st.stop()
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-review.csv")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -61,52 +67,53 @@ if "airline" not in df.columns:
         ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]
     ) for _ in range(len(df))]
 
-# -------------------------
-# Load Sentiment Analyzer (robust)
-# -------------------------
-def load_sentiment_tool():
-    try:
-        torch.set_default_device("cpu")
-        pipe = pipeline(
-            "sentiment-analysis",
-            model="distilbert-base-uncased-finetuned-sst-2-english",
-            device=-1,
-            device_map="cpu"
-        )
-        return pipe, "huggingface"
-    except Exception as e:
-        st.warning(f"⚠️ Hugging Face model failed: {e}\nSwitching to VADER fallback...")
-        nltk.download("vader_lexicon")
-        return SentimentIntensityAnalyzer(), "vader"
+# 🧠 Sentiment Analysis
+try:
+    sentiment_pipeline = pipeline(
+        "sentiment-analysis",
+        model="distilbert-base-uncased-finetuned-sst-2-english"
+        # ✅ Removed device argument to avoid accelerate error
+    )
+    use_hf = True
+    st.info("Using Hugging Face sentiment analysis model.")
+except Exception as e:
+    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+    sentiment_pipeline = None
+    use_hf = False
 
-sentiment_tool, mode = load_sentiment_tool()
-
-def get_sentiment(text):
-    if not isinstance(text, str) or text.strip() == "":
-        return "NEUTRAL"
-    if mode == "huggingface":
-        try:
-            return sentiment_tool(str(text))[0]["label"].upper()
-        except Exception:
-            return "NEUTRAL"
-    else:  # VADER fallback
-        score = sentiment_tool.polarity_scores(text)["compound"]
-        return "POSITIVE" if score > 0 else "NEGATIVE"
-
-# 📝 Select Text Column
 text_candidates = [col for col in df.columns if df[col].dtype == "object" and df[col].str.len().mean() > 30]
 default_text_col = "text" if "text" in df.columns else (text_candidates[0] if text_candidates else None)
 
 if default_text_col:
     st.markdown("### 📝 Select Text Column for Sentiment Analysis")
     selected_text_col = st.selectbox("Choose column containing customer feedback:", df.columns, index=df.columns.get_loc(default_text_col))
-    df["sentiment"] = df[selected_text_col].apply(get_sentiment)
+
+    try:
+        if use_hf:
+            df["sentiment"] = df[selected_text_col].apply(lambda x: sentiment_pipeline(str(x))[0]["label"].upper())
+        else:
+            sia = SentimentIntensityAnalyzer()
+            def vader_label(text):
+                score = sia.polarity_scores(str(text))["compound"]
+                if score >= 0.05:
+                    return "POSITIVE"
+                elif score <= -0.05:
+                    return "NEGATIVE"
+                else:
+                    return "NEUTRAL"
+            df["sentiment"] = df[selected_text_col].apply(vader_label)
+    except Exception as e:
+        st.error("❌ Error applying sentiment analysis. Please check if the selected column contains valid text.")
+        st.exception(e)
+        st.stop()
 else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
 
-# ✈️ Normalize airline names
+# ✈️ Normalize airline names for dropdown visibility
 df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", regex=True).str.title()
+
+# 🔧 Manual mapping to standardize Akasa and AirAsia
 airline_map = {
     "Air Asia": "AirAsia",
     "Air Asia India": "AirAsia",
@@ -130,16 +137,20 @@ if "date" in df.columns:
     pivot_df = grouped.pivot(index="date", columns="sentiment", values="count").fillna(0)
     pivot_df = pivot_df.reset_index().melt(id_vars="date", var_name="sentiment", value_name="count")
 
-    if not pivot_df.empty:
+    if pivot_df.empty:
+        st.info("Not enough data to show sentiment trend.")
+    else:
         fig_trend = px.line(
-            pivot_df, x="date", y="count", color="sentiment",
+            pivot_df,
+            x="date",
+            y="count",
+            color="sentiment",
             title="Sentiment Over Time",
-            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson"}
+            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "grey"}
         )
         fig_trend.update_traces(mode="lines+markers")
+        fig_trend.update_layout(legend_title_text="Sentiment", yaxis_title="Count", xaxis_title="Date")
         st.plotly_chart(fig_trend, use_container_width=True)
-    else:
-        st.info("Not enough data to show sentiment trend.")
 else:
     st.info("No date column found. Trendline skipped.")
 
@@ -149,14 +160,17 @@ if "date" in df.columns:
     div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
     div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
     div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
-
     div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
     fig_diverge = px.bar(
-        div_melted, x="date", y="count", color="sentiment",
+        div_melted,
+        x="date",
+        y="count",
+        color="sentiment",
         title="Diverging Sentiment by Date",
         color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
         barmode="relative"
     )
+    fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
     st.plotly_chart(fig_diverge)
 
 # 📊 Sentiment Distribution
@@ -172,18 +186,21 @@ st.pyplot(fig2, use_container_width=True)
 st.markdown("### 🧠 Frequent Negative Keywords")
 custom_stopwords = set(STOPWORDS)
 custom_stopwords.update([
-    "positive", "negative", "neutral", "experience", "service", "flight", "airline",
+    "positive", "negative", "neutral",
+    "POSITIVE", "NEGATIVE", "NEUTRAL",
+    "experience", "service", "flight", "airline",
     "good", "bad", "okay", "delay", "delayed", "late", "on", "off", "get", "got"
 ])
 neg_text_series = df[df["sentiment"] == "NEGATIVE"][selected_text_col].dropna().astype(str)
 tokens = []
 for text in neg_text_series:
     words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
-    tokens.extend([w for w in words if w not in custom_stopwords])
-
-if tokens:
+    filtered = [word for word in words if word not in custom_stopwords]
+    tokens.extend(filtered)
+neg_text = " ".join(tokens)
+if neg_text.strip():
     wordcloud = WordCloud(width=800, height=400, background_color='white',
-                          stopwords=custom_stopwords, collocations=False, max_words=100).generate(" ".join(tokens))
+                          stopwords=custom_stopwords, collocations=False, max_words=100).generate(neg_text)
     fig_wc, ax_wc = plt.subplots(figsize=(10, 5))
     ax_wc.imshow(wordcloud, interpolation='bilinear')
     ax_wc.axis("off")
@@ -191,7 +208,7 @@ if tokens:
 else:
     st.info("No negative sentiment found for this airline.")
 
-# ⚠️ CX Alert
+# ⚠️ CX Alert Section
 st.markdown("### ⚠️ CX Alert")
 neg_count = sentiment_counts.get("NEGATIVE", 0)
 if neg_count > 10:
@@ -199,7 +216,7 @@ if neg_count > 10:
 else:
     st.success("No major negative sentiment spike detected.")
 
-# 📌 Footer
+# 📌 Footer Branding
 st.markdown("---")
 st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
 st.markdown("""
