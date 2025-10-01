@@ -54,7 +54,7 @@ if uploaded_file is not None:
     st.success("✅ Custom file uploaded successfully.")
 else:
     df = pd.read_csv(DEFAULT_CSV_URL)
-    st.info("ℹ️ Using default demo file from GitHub")
+    st.info("ℹ️ Using default demo file")
 
 st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
 
