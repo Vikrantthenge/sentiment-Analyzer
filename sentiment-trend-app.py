@@ -41,7 +41,7 @@ with st.sidebar:
 
 # 📂 File Upload or Default
 st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
-uploaded_file = st.file_uploader("Upload airline_reviews.csv", type=["csv"])
+uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
