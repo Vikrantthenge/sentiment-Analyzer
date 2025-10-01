@@ -146,6 +146,22 @@ fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
 st.plotly_chart(fig_diverge)
 
 # ✈️ Airline Filter
+# ✈️ Ensure airline column includes full carrier list
+airline_list = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]
+
+if "airline" not in df.columns:
+    df["airline"] = [random.choice(airline_list) for _ in range(len(df))]
+else:
+    existing_airlines = df["airline"].dropna().unique().tolist()
+    missing_airlines = [air for air in airline_list if air not in existing_airlines]
+    if missing_airlines:
+        filler_rows = pd.DataFrame({
+            "airline": missing_airlines,
+            selected_text_col: [""] * len(missing_airlines),
+            "sentiment": ["POSITIVE"] * len(missing_airlines)
+        })
+        df = pd.concat([df, filler_rows], ignore_index=True)
+        
 selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
 df = df[df["airline"] == selected_airline]
 
