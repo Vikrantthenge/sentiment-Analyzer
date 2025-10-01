@@ -1,7 +1,9 @@
 ## ✈️ Airline Sentiment Analyzer
 
 **Built by Vikrant Thenge — NLP Strategist & Dashboard Architect**  
-📍 Mumbai-based | 🎯 Recruiter-Facing | 🧠 CX Intelligence
+[![Location](https://img.shields.io/badge/Mumbai-based-6c757d?logo=googlemaps)](https://www.google.com/maps/place/Mumbai)
+[![Recruiter](https://img.shields.io/badge/Recruiter-Facing-0078D4?logo=target)](https://www.linkedin.com/in/vthenge)
+[![CX](https://img.shields.io/badge/CX-Intelligence-00C853?logo=insights)](https://sentiment-analyzer-vikrant.streamlit.app)
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
