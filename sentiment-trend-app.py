@@ -54,7 +54,7 @@ st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
-    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]) for _ in range(len(df))]
+    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]) for _ in range(len(df))]
 
 # 🧠 Sentiment Analysis
 sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
@@ -77,7 +77,7 @@ else:
     st.stop()
 
 # ✈️ Ensure airline column includes full carrier list
-airline_list = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]
+airline_list = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]
 
 if "airline" not in df.columns:
     df["airline"] = [random.choice(airline_list) for _ in range(len(df))]
