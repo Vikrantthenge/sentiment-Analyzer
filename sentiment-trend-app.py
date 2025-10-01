@@ -2,15 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from transformers import pipeline
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 import random
 import re
-
-# For VADER fallback
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import nltk
-nltk.download('vader_lexicon')
 
 # 🌐 Page Config
 st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
@@ -53,11 +49,14 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Custom file uploaded successfully.")
 else:
-    df = pd.read_csv(DEFAULT_CSV_URL)
-    st.info("ℹ️ Using default demo file")
+    try:
+        df = pd.read_csv(DEFAULT_CSV_URL)
+        st.info("ℹ️ Using default demo file from GitHub")
+    except Exception:
+        st.error("❌ Default file not found. Please upload a CSV file.")
+        st.stop()
 
 st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
-
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -70,14 +69,12 @@ try:
     sentiment_pipeline = pipeline(
         "sentiment-analysis",
         model="distilbert-base-uncased-finetuned-sst-2-english"
-        # ✅ Removed device argument to avoid accelerate error
     )
-    use_hf = True
-    st.info("Using Hugging Face sentiment analysis model.")
-except Exception as e:
+    huggingface_available = True
+except Exception:
     st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
-    sentiment_pipeline = None
-    use_hf = False
+    huggingface_available = False
+    analyzer = SentimentIntensityAnalyzer()
 
 text_candidates = [col for col in df.columns if df[col].dtype == "object" and df[col].str.len().mean() > 30]
 default_text_col = "text" if "text" in df.columns else (text_candidates[0] if text_candidates else None)
@@ -87,19 +84,13 @@ if default_text_col:
     selected_text_col = st.selectbox("Choose column containing customer feedback:", df.columns, index=df.columns.get_loc(default_text_col))
 
     try:
-        if use_hf:
+        if huggingface_available:
             df["sentiment"] = df[selected_text_col].apply(lambda x: sentiment_pipeline(str(x))[0]["label"].upper())
         else:
-            sia = SentimentIntensityAnalyzer()
-            def vader_label(text):
-                score = sia.polarity_scores(str(text))["compound"]
-                if score >= 0.05:
-                    return "POSITIVE"
-                elif score <= -0.05:
-                    return "NEGATIVE"
-                else:
-                    return "NEUTRAL"
-            df["sentiment"] = df[selected_text_col].apply(vader_label)
+            def vader_sentiment(text):
+                score = analyzer.polarity_scores(str(text))['compound']
+                return "POSITIVE" if score >= 0.05 else "NEGATIVE" if score <= -0.05 else "NEUTRAL"
+            df["sentiment"] = df[selected_text_col].apply(vader_sentiment)
     except Exception as e:
         st.error("❌ Error applying sentiment analysis. Please check if the selected column contains valid text.")
         st.exception(e)
@@ -124,13 +115,13 @@ df["airline"] = df["airline"].replace(airline_map)
 selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
 df = df[df["airline"] == selected_airline]
 
-# 📈 Sentiment Trend Over Time
+# 📈 Sentiment Trend Over Time (Stacked Area)
 st.markdown("### 📈 Sentiment Trend Over Time")
 if "date" in df.columns:
     df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
     df = df[df["date"].notna()]
     df_trend = df.copy()
-
+    
     grouped = df_trend.groupby(["date", "sentiment"]).size().reset_index(name="count")
     pivot_df = grouped.pivot(index="date", columns="sentiment", values="count").fillna(0)
     pivot_df = pivot_df.reset_index().melt(id_vars="date", var_name="sentiment", value_name="count")
@@ -138,37 +129,38 @@ if "date" in df.columns:
     if pivot_df.empty:
         st.info("Not enough data to show sentiment trend.")
     else:
-        fig_trend = px.line(
+        fig_trend = px.area(
             pivot_df,
             x="date",
             y="count",
             color="sentiment",
             title="Sentiment Over Time",
-            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "grey"}
+            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "gray"}
         )
-        fig_trend.update_traces(mode="lines+markers")
-        fig_trend.update_layout(legend_title_text="Sentiment", yaxis_title="Count", xaxis_title="Date")
         st.plotly_chart(fig_trend, use_container_width=True)
 else:
     st.info("No date column found. Trendline skipped.")
 
-# 📊 Diverging Bar Chart
-st.markdown("### 📊 Diverging Sentiment Bar Chart")
+# 📊 Diverging Sentiment Bar Chart (Horizontal)
+st.markdown("### 📊 Diverging Sentiment by Date")
 if "date" in df.columns:
     div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
     div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
     div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
+    div_df["NEUTRAL"] = div_df.get("NEUTRAL", 0)  # optional
+    
     div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+
     fig_diverge = px.bar(
         div_melted,
-        x="date",
-        y="count",
+        y="date",
+        x="count",
         color="sentiment",
         title="Diverging Sentiment by Date",
         color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
         barmode="relative"
     )
-    fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
+    fig_diverge.update_layout(yaxis_title="Date", xaxis_title="Sentiment Count")
     st.plotly_chart(fig_diverge)
 
 # 📊 Sentiment Distribution
@@ -189,16 +181,20 @@ custom_stopwords.update([
     "experience", "service", "flight", "airline",
     "good", "bad", "okay", "delay", "delayed", "late", "on", "off", "get", "got"
 ])
+
 neg_text_series = df[df["sentiment"] == "NEGATIVE"][selected_text_col].dropna().astype(str)
 tokens = []
 for text in neg_text_series:
     words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
     filtered = [word for word in words if word not in custom_stopwords]
     tokens.extend(filtered)
+
 neg_text = " ".join(tokens)
 if neg_text.strip():
-    wordcloud = WordCloud(width=800, height=400, background_color='white',
-                          stopwords=custom_stopwords, collocations=False, max_words=100).generate(neg_text)
+    wordcloud = WordCloud(
+        width=800, height=400, background_color='white',
+        stopwords=custom_stopwords, collocations=False, max_words=100
+    ).generate(neg_text)
     fig_wc, ax_wc = plt.subplots(figsize=(10, 5))
     ax_wc.imshow(wordcloud, interpolation='bilinear')
     ax_wc.axis("off")
