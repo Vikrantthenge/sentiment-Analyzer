@@ -52,10 +52,6 @@ else:
 
 st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline_feedback.csv")
 
-# ✈️ Simulate airline column if missing
-if "airline" not in df.columns:
-    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]) for _ in range(len(df))]
-
 # 🧠 Sentiment Analysis
 sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
 
@@ -75,8 +71,24 @@ if default_text_col:
 else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
-    
-# 📈 Sentiment Trend Over Time (pivoted for full visibility)
+
+# ✈️ Ensure airline column includes full carrier list
+airline_list = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]
+
+if "airline" not in df.columns:
+    df["airline"] = [random.choice(airline_list) for _ in range(len(df))]
+else:
+    existing_airlines = df["airline"].dropna().unique().tolist()
+    missing_airlines = [air for air in airline_list if air not in existing_airlines]
+    if missing_airlines:
+        filler_rows = pd.DataFrame({
+            "airline": missing_airlines,
+            selected_text_col: [""] * len(missing_airlines),
+            "sentiment": ["POSITIVE"] * len(missing_airlines)
+        })
+        df = pd.concat([df, filler_rows], ignore_index=True)
+
+# 📈 Sentiment Trend Over Time
 st.markdown("### 📈 Sentiment Trend Over Time")
 
 if "date" in df.columns:
@@ -102,7 +114,7 @@ if "date" in df.columns:
                 "NEGATIVE": "crimson"
             }
         )
-        fig_trend.update_traces(mode="lines+markers")  # adds points on lines
+        fig_trend.update_traces(mode="lines+markers")
         fig_trend.update_layout(
             legend_title_text="Sentiment",
             yaxis_title="Count",
@@ -112,7 +124,7 @@ if "date" in df.columns:
 else:
     st.info("No date column found. Trendline skipped.")
 
-# 📊 Diverging Bar Chart for Sentiment by Date
+# 📊 Diverging Bar Chart
 st.markdown("### 📊 Diverging Sentiment Bar Chart")
 
 div_df = df_trend.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
@@ -191,6 +203,7 @@ if neg_count > 10:
     st.error(f"Spike in negative sentiment detected for {selected_airline}. Investigate recent feedback.")
 else:
     st.success("No major negative sentiment spike detected.")
+
 
 # 📌 Footer Branding with Badges
 st.markdown("---")
