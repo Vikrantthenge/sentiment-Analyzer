@@ -51,6 +51,7 @@ else:
     st.info("ℹ️ Using default demo file: airline_feedback.csv")
 
 st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
     df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]) for _ in range(len(df))]
@@ -148,8 +149,9 @@ fig_diverge = px.bar(
 fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
 st.plotly_chart(fig_diverge)
 
-# ✈️ Airline Filter
 
+# ✈️ Airline Filter
+df["airline"] = df["airline"].astype(str).str.strip().str.title()  # Normalize names
 selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
 df = df[df["airline"] == selected_airline]
 
