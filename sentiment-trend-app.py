@@ -149,7 +149,6 @@ fig_diverge = px.bar(
 fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
 st.plotly_chart(fig_diverge)
 
-
 # ✈️ Airline Filter
 df["airline"] = df["airline"].astype(str).str.strip().str.title()  # Normalize names
 selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
