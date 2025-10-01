@@ -154,6 +154,11 @@ df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", r
 selected_airline = st.selectbox("✈️ Filter by Airline", df["airline"].unique())
 df = df[df["airline"] == selected_airline]
 
+expected_airlines = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]
+unexpected = [air for air in df["airline"].unique() if air not in expected_airlines]
+if unexpected:
+    st.warning(f"⚠️ Unexpected airline names found: {unexpected}")
+
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
 sentiment_counts = df["sentiment"].value_counts()
