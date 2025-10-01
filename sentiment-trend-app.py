@@ -273,6 +273,7 @@ st.markdown("""
 🔐 This dashboard analyzes anonymized feedback only. No personal data is stored.
 </div>
 """, unsafe_allow_html=True)
+
 st.markdown("""
 <div style='text-align: center; font-size: 16px; font-weight: bold; color: #0078D4;'>
 🛠️ Version: v1.0 | 📅 Last Updated: October 2025
