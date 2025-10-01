@@ -60,16 +60,11 @@ st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
-    df["airline"] = [random.choice(
-        ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]
-    ) for _ in range(len(df))]
+    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]) for _ in range(len(df))]
 
 # 🧠 Sentiment Analysis
 try:
-    sentiment_pipeline = pipeline(
-        "sentiment-analysis",
-        model="distilbert-base-uncased-finetuned-sst-2-english"
-    )
+    sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
     huggingface_available = True
 except Exception:
     st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
@@ -115,13 +110,27 @@ df["airline"] = df["airline"].replace(airline_map)
 selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
 df = df[df["airline"] == selected_airline]
 
+# 📊 Sentiment by Airline (Grouped Bar Chart)
+st.markdown("### 📊 Sentiment Volume by Airline")
+sentiment_airline = df.groupby(["airline", "sentiment"]).size().reset_index(name="count")
+fig_grouped = px.bar(
+    sentiment_airline,
+    x="airline",
+    y="count",
+    color="sentiment",
+    barmode="group",
+    title="Sentiment Volume by Airline",
+    color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red", "NEUTRAL": "gray"}
+)
+st.plotly_chart(fig_grouped, use_container_width=True)
+
 # 📈 Sentiment Trend Over Time (Stacked Area)
 st.markdown("### 📈 Sentiment Trend Over Time")
 if "date" in df.columns:
     df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
     df = df[df["date"].notna()]
     df_trend = df.copy()
-    
+
     grouped = df_trend.groupby(["date", "sentiment"]).size().reset_index(name="count")
     pivot_df = grouped.pivot(index="date", columns="sentiment", values="count").fillna(0)
     pivot_df = pivot_df.reset_index().melt(id_vars="date", var_name="sentiment", value_name="count")
@@ -138,30 +147,72 @@ if "date" in df.columns:
             color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "gray"}
         )
         st.plotly_chart(fig_trend, use_container_width=True)
-else:
-    st.info("No date column found. Trendline skipped.")
 
-# 📊 Diverging Sentiment Bar Chart (Horizontal)
-st.markdown("### 📊 Diverging Sentiment by Date")
-if "date" in df.columns:
-    div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
-    div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
-    div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
-    div_df["NEUTRAL"] = div_df.get("NEUTRAL", 0)  # optional
-    
-    div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+        # 📈 Rolling Average Sentiment Trend
+        st.markdown("### 📈 Smoothed Sentiment Trend (7-Day Rolling Avg)")
+        rolling_df = df.groupby(["date", "sentiment"]).size().unstack().fillna(0)
+        rolling_avg = rolling_df.rolling(window=7).mean().reset_index().melt(id_vars="date", var_name="sentiment", value_name="count")
+        fig_smooth = px.line(
+            rolling_avg,
+            x="date",
+            y="count",
+            color="sentiment",
+            title="7-Day Rolling Average of Sentiment",
+            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red", "NEUTRAL": "gray"}
+        )
+        st.plotly_chart(fig_smooth, use_container_width=True)
 
-    fig_diverge = px.bar(
-        div_melted,
-        y="date",
-        x="count",
-        color="sentiment",
-        title="Diverging Sentiment by Date",
-        color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
-        barmode="relative"
-    )
-    fig_diverge.update_layout(yaxis_title="Date", xaxis_title="Sentiment Count")
-    st.plotly_chart(fig_diverge)
+        # 📍 Sentiment Heatmap by Weekday
+        st.markdown("### 📍 Sentiment Heatmap by Weekday")
+        df["weekday"] = df["date"].dt.day_name()
+        heatmap_df = df.groupby(["weekday", "sentiment"]).size().unstack(fill_value=0)
+        heatmap_df = heatmap_df.reindex(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+        fig_heatmap = px.imshow(
+            heatmap_df,
+            labels=dict(x="Sentiment", y="Weekday", color="Count"),
+            title="Sentiment Volume by Weekday",
+            color_continuous_scale="RdBu"
+        )
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+
+        # 📊 Diverging Sentiment Bar Chart
+        st.markdown("### 📊 Diverging Sentiment by Date")
+        div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
+        div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
+        div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
+        div_melted = div_df.melt(id_vars="
+                                         # 📊 Diverging Sentiment Bar Chart
+        st.markdown("### 📊 Diverging Sentiment by Date")
+        div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
+        div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
+        div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
+        div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+
+        fig_diverge = px.bar(
+            div_melted,
+            y="date",
+            x="count",
+            color="sentiment",
+            title="Diverging Sentiment by Date",
+            color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "red"},
+            barmode="relative"
+        )
+        fig_diverge.update_layout(yaxis_title="Date", xaxis_title="Sentiment Count")
+        st.plotly_chart(fig_diverge)
+
+        # 🧭 Radar Chart — Airline Sentiment Profile
+        st.markdown("### 🧭 Airline Sentiment Profile (Radar Chart)")
+        radar_df = df.groupby(["airline", "sentiment"]).size().unstack(fill_value=0).reset_index()
+        radar_df = radar_df.set_index("airline")
+        fig_radar = px.line_polar(
+            radar_df.reset_index().melt(id_vars="airline", var_name="sentiment", value_name="count"),
+            r="count",
+            theta="sentiment",
+            color="airline",
+            line_close=True,
+            title="Sentiment Profile by Airline"
+        )
+        st.plotly_chart(fig_radar, use_container_width=True)
 
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
@@ -206,9 +257,9 @@ else:
 st.markdown("### ⚠️ CX Alert")
 neg_count = sentiment_counts.get("NEGATIVE", 0)
 if neg_count > 10:
-    st.error(f"Spike in negative sentiment detected for {selected_airline}. Investigate recent feedback.")
+    st.error(f"🚨 Spike in negative sentiment detected for {selected_airline}. Investigate recent feedback.")
 else:
-    st.success("No major negative sentiment spike detected.")
+    st.success("✅ No major negative sentiment spike detected.")
 
 # 📌 Footer Branding
 st.markdown("---")
@@ -221,3 +272,5 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("[🚀 Live App](https://sentiment-analyzer-vikrant.streamlit.app)")
+
+                                 
