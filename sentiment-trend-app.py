@@ -59,7 +59,11 @@ if "airline" not in df.columns:
     ) for _ in range(len(df))]
 
 # 🧠 Sentiment Analysis
-sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+sentiment_pipeline = pipeline(
+    "sentiment-analysis",
+    model="distilbert-base-uncased-finetuned-sst-2-english",
+    device=-1   # 👈 Force CPU
+)
 
 text_candidates = [col for col in df.columns if df[col].dtype == "object" and df[col].str.len().mean() > 30]
 default_text_col = "text" if "text" in df.columns else (text_candidates[0] if text_candidates else None)
