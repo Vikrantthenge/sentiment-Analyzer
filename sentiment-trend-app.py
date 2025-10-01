@@ -54,7 +54,7 @@ st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline_
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
-    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara"]) for _ in range(len(df))]
+    df["airline"] = [random.choice(["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "AirAsia"]) for _ in range(len(df))]
 
 # 🧠 Sentiment Analysis
 sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
@@ -75,7 +75,7 @@ if default_text_col:
 else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
-
+    
 # 📈 Sentiment Trend Over Time (pivoted for full visibility)
 st.markdown("### 📈 Sentiment Trend Over Time")
 
