@@ -180,8 +180,9 @@ if "date" in df.columns:
         div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
         div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
         div_df["NEGATIVE"] = -div_df.get("NEGATIVE", 0)
-        div_melted = div_df.melt(id_vars="
-                                         # 📊 Diverging Sentiment Bar Chart
+        div_melted = div_df.melt(id_vars="date", value_vars=["POSITIVE", "NEGATIVE"], var_name="sentiment", value_name="count")
+                                         
+        # 📊 Diverging Sentiment Bar Chart
         st.markdown("### 📊 Diverging Sentiment by Date")
         div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
         div_df["POSITIVE"] = div_df.get("POSITIVE", 0)
