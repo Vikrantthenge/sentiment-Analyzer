@@ -20,25 +20,25 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 
 ## 🚀 Features
 
-- ✅ Sentiment Analysis using HuggingFace Transformers  
-- 📈 Trendline with red/blue polarity mapping  
-- 📊 Diverging Bar Chart for sentiment swings  
-- 🧠 Word Cloud for frequent negative keywords  
-- ✈️ Airline Filter to isolate carrier-specific feedback  
-- ⚠️ CX Alert System for spikes in negative sentiment  
-- 📁 Upload your own CSV or use the default demo file  
-- 🎨 Animated branding, sidebar polish, and footer badges
+✅ **Sentiment Analysis** using HuggingFace Transformers  
+📈 **Trendline** with red/blue polarity mapping  
+📊 **Diverging Bar Chart** for sentiment swings  
+🧠 **Word Cloud** for frequent negative keywords  
+✈️ **Airline Filter** to isolate carrier-specific feedback  
+⚠️ **CX Alert System** for spikes in negative sentiment  
+📁 **CSV Upload** or use the default demo file  
+🎨 **Animated branding**, sidebar polish, and footer badges  
 
 ---
 
 ## 📦 Tech Stack
 
-- **Streamlit** for UI  
-- **Transformers (DistilBERT)** for sentiment analysis  
-- **Plotly** for interactive charts  
-- **Matplotlib & WordCloud** for visual NLP  
-- **Pandas** for data wrangling  
-- **GitHub Actions** for CI/CD automation
+🧩 **Streamlit** for UI  
+🤖 **Transformers (DistilBERT)** for sentiment analysis  
+📊 **Plotly** for interactive charts  
+🖼️ **Matplotlib & WordCloud** for visual NLP  
+📐 **Pandas** for data wrangling  
+🔄 **GitHub Actions** for CI/CD automation
 
 ---
 
