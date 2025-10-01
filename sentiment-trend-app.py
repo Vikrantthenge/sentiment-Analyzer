@@ -268,7 +268,7 @@ st.markdown("""
 
 
 st.markdown("""
-<div style='text-align: center; font-size:16px; font-weight:normal; color:#6c757d; line-height:1.2;'>
+<div style='text-align: center; font-size:16px; font-weight:normal; color:#343a40; line-height:1.2;'>
 🔍 Powered by NLP & CX Intelligence — Built for Airline Feedback Precision.<br>
 🔐 This dashboard analyzes anonymized feedback only. No personal data is stored.
 </div>
