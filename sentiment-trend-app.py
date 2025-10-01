@@ -50,7 +50,7 @@ else:
     df = pd.read_csv("airline_feedback.csv")
     st.info("ℹ️ Using default demo file: airline_feedback.csv")
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline_feedback.csv")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -76,21 +76,17 @@ else:
     st.error("❌ No suitable text column found. Please upload a CSV with a column like 'text', 'review', or 'comments'.")
     st.stop()
 
-# ✈️ Ensure airline column includes full carrier list
-airline_list = ["Indigo", "Air India", "SpiceJet", "Vistara", "Akasa", "Air Asia"]
+# ✈️ Normalize airline names for dropdown visibility
+df["airline"] = df["airline"].astype(str).str.strip().str.replace(r"\s+", " ", regex=True).str.title()
 
-if "airline" not in df.columns:
-    df["airline"] = [random.choice(airline_list) for _ in range(len(df))]
-else:
-    existing_airlines = df["airline"].dropna().unique().tolist()
-    missing_airlines = [air for air in airline_list if air not in existing_airlines]
-    if missing_airlines:
-        filler_rows = pd.DataFrame({
-            "airline": missing_airlines,
-            selected_text_col: [""] * len(missing_airlines),
-            "sentiment": ["POSITIVE"] * len(missing_airlines)
-        })
-        df = pd.concat([df, filler_rows], ignore_index=True)
+# 🔧 Manual mapping to standardize Akasa and AirAsia
+airline_map = {
+    "Air Asia": "AirAsia",
+    "Air Asia India": "AirAsia",
+    "Akasa Air": "Akasa",
+    "Akasa Airlines": "Akasa"
+}
+df["airline"] = df["airline"].replace(airline_map)
 
 # 📈 Sentiment Trend Over Time
 st.markdown("### 📈 Sentiment Trend Over Time")
@@ -150,21 +146,8 @@ fig_diverge.update_layout(yaxis_title="Sentiment Count", xaxis_title="Date")
 st.plotly_chart(fig_diverge)
 
 # ✈️ Airline Filter
-
-# ✈️ Normalize airline names for dropdown visibility
-df["airline"] = df["airline"].astype(str).str.strip()
-
-# 🔧 Manual mapping to standardize Akasa and AirAsia
-airline_map = {
-    "Air Asia": "AirAsia",
-    "Air Asia India": "AirAsia",
-    "Akasa Air": "Akasa",
-    "Akasa Airlines": "Akasa"
-}
-df["airline"] = df["airline"].replace(airline_map)
 selected_airline = st.selectbox("✈️ Filter by Airline", sorted(df["airline"].unique()))
 df = df[df["airline"] == selected_airline]
-
 
 # 📊 Sentiment Distribution
 st.markdown("### 📊 Sentiment Distribution")
@@ -221,7 +204,6 @@ if neg_count > 10:
 else:
     st.success("No major negative sentiment spike detected.")
 
-
 # 📌 Footer Branding with Badges
 st.markdown("---")
 st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
@@ -233,4 +215,3 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("[🚀 Live App](https://sentiment-analyzer-vikrant.streamlit.app)")
-
