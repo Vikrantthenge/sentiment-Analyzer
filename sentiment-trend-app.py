@@ -46,20 +46,18 @@ with st.sidebar:
 
 # 📂 File Upload or Default
 st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
-uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
+DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
 
+uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Custom file uploaded successfully.")
 else:
-    try:
-        df = pd.read_csv("airline-review.csv")
-        st.info("ℹ️ Using default demo file: airline-review.csv")
-    except FileNotFoundError:
-        st.error("❌ Default file not found. Please upload a CSV file.")
-        st.stop()
+    df = pd.read_csv(DEFAULT_CSV_URL)
+    st.info("ℹ️ Using default demo file from GitHub")
 
 st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
