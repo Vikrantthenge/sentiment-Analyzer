@@ -32,36 +32,43 @@ with col2:
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
 
     # 🔀 Mode Selection: Basic vs NLP Pipeline
+import streamlit as st
 import spacy
 from spacy.cli import download
 
-try:
-    nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-except OSError:
-    st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
-    st.stop()
+def main():
+    # 🔀 Mode Selection: Basic vs NLP Pipeline
+    mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
 
-if mode == "NLP Pipeline Demo":
-    st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("Enter text for NLP processing")
-    if user_input:
-        import spacy
-        nlp = spacy.load("en_core_web_sm")
-        doc = nlp(user_input)
+    if mode == "NLP Pipeline Demo":
+        st.subheader("🧬 NLP Pipeline Output")
+        user_input = st.text_area("Enter text for NLP processing")
 
-        st.markdown("**🔤 Tokens:**")
-        st.write([token.text for token in doc])
+        try:
+            nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+        except OSError:
+            st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
+            st.stop()
 
-        st.markdown("**🧾 Lemmas:**")
-        st.write([token.lemma_ for token in doc])
+        if user_input:
+            doc = nlp(user_input)
 
-        st.markdown("**🏷️ Named Entities:**")
-        st.write([(ent.text, ent.label_) for ent in doc.ents])
+            st.markdown("**🔤 Tokens:**")
+            st.write([token.text for token in doc])
 
-        st.markdown("**📊 Part-of-Speech Tags:**")
-        st.write([(token.text, token.pos_) for token in doc])
-        
-    st.stop()  # Prevent rest of app from running in NLP mode
+            st.markdown("**🧾 Lemmas:**")
+            st.write([token.lemma_ for token in doc])
+
+            st.markdown("**🏷️ Named Entities:**")
+            st.write([(ent.text, ent.label_) for ent in doc.ents])
+
+            st.markdown("**📊 POS Tags:**")
+            st.write([(token.text, token.pos_) for token in doc])
+
+        st.stop()
+
+if __name__ == "__main__":
+    main()
 
 # 📘 Sidebar Branding
 with st.sidebar:
