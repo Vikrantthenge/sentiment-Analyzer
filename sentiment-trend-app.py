@@ -46,6 +46,11 @@ import plotly.express as px
 def load_sentiment_pipeline():
     return pipeline("sentiment-analysis")
 
+import spacy
+from spacy.cli import download
+
+download("en_core_web_sm")  # ✅ Ensures model is available
+nlp = spacy.load("en_core_web_sm")
 @st.cache_resource
 def load_spacy_model():
     download("en_core_web_sm")  # ✅ Ensures model is available
