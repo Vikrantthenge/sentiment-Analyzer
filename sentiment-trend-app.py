@@ -49,11 +49,10 @@ mode = st.radio("🔀 Choose Mode", ["🧠 Basic Sentiment", "🧬 NLP Pipeline 
 
 if mode == "🧬 NLP Pipeline Demo":
     st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("💬 Enter text for NLP processing")
-
-    try:
-        nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-    except OSError:
+user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
+try:
+     nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+except OSError:
         st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
         st.stop()
 
