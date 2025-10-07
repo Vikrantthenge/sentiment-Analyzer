@@ -60,18 +60,22 @@ if mode == "NLP Pipeline Demo":
 
     # ✅ Run NLP only if input is provided
     if user_input and user_input.strip():
-        doc = nlp(user_input)
+        try:
+            doc = nlp(user_input)
 
-        st.markdown("**🔤 Tokens:**")
-        st.write([f"🔹 {token.text}" for token in doc])
+            with st.expander("🔍 View Full NLP Breakdown"):
+                st.markdown("**🔤 Tokens:**")
+                st.write([f"🔹 {token.text}" for token in doc])
 
-        st.markdown("**🧾 Lemmas:**")
-        st.write([f"📄 {token.lemma_}" for token in doc])
+                st.markdown("**🧾 Lemmas:**")
+                st.write([f"📄 {token.lemma_}" for token in doc])
 
-        st.markdown("**📊 POS Tags:**")
-        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+                st.markdown("**📊 POS Tags:**")
+                st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
-        # You can continue with entity mapping, wordclouds, POS chart, etc.
+                # You can continue with entity mapping, wordclouds, POS chart, etc.
+        except Exception as e:
+            st.error(f"⚠️ NLP processing failed: {e}")
     else:
         st.info("ℹ️ Please enter some text to run the NLP pipeline.")
 
