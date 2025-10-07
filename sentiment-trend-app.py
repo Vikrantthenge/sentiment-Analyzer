@@ -57,8 +57,8 @@ if mode == "🧬 NLP Pipeline Demo":
         st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
         st.stop()
 
-    if user_input:
-     doc = nlp(user_input)
+   if user_input:
+    doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
     ENTITY_EMOJI_MAP = {
@@ -100,20 +100,7 @@ if mode == "🧬 NLP Pipeline Demo":
         st.markdown("**📊 POS Tags:**")
         st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
-        # 🔍 NLP Breakdown in Expander
-        with st.expander("🔍 View Full NLP Breakdown"):
-            st.markdown("**🔤 Tokens:**")
-            st.write([f"🔹 {token.text}" for token in doc])
-
-            st.markdown("**🧾 Lemmas:**")
-            st.write([f"📄 {token.lemma_}" for token in doc])
-
-            st.markdown("**🏷️ Named Entities:**")
-            st.write([f"🏷️ {ent.text} ({ent.label_})" for ent in doc.ents])
-
-            st.markdown("**📊 POS Tags:**")
-            st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
-
+   
         # ☁️ Word Cloud of Lemmas
         lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
         lemma_text = " ".join(lemmas)
