@@ -58,7 +58,47 @@ if mode == "🧬 NLP Pipeline Demo":
         st.stop()
 
     if user_input:
-        doc = nlp(user_input)
+    doc = nlp(user_input)
+
+    # 🧠 Emoji Mapping for Entity Types
+    ENTITY_EMOJI_MAP = {
+        "PERSON": "🧑",
+        "ORG": "🏢",
+        "GPE": "🌍",
+        "LOC": "📍",
+        "DATE": "📅",
+        "TIME": "⏰",
+        "MONEY": "💰",
+        "QUANTITY": "🔢",
+        "EVENT": "🎉",
+        "PRODUCT": "📦",
+        "LANGUAGE": "🗣️",
+        "NORP": "👥",
+        "FAC": "🏗️",
+        "LAW": "⚖️",
+        "WORK_OF_ART": "🎨"
+    }
+
+    # 🔍 NLP Breakdown in Expander
+    with st.expander("🔍 View Full NLP Breakdown"):
+        st.markdown("**🔤 Tokens:**")
+        st.write([f"🔹 {token.text}" for token in doc])
+
+        st.markdown("**🧾 Lemmas:**")
+        st.write([f"📄 {token.lemma_}" for token in doc])
+
+        st.markdown("**🏷️ Named Entities (Auto-Mapped):**")
+        if doc.ents:
+            styled_ents = [
+                f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                for ent in doc.ents
+            ]
+            st.write(styled_ents)
+        else:
+            st.info("ℹ️ No named entities found in the input.")
+
+        st.markdown("**📊 POS Tags:**")
+        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
         # 🔍 NLP Breakdown in Expander
         with st.expander("🔍 View Full NLP Breakdown"):
