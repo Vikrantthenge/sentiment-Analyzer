@@ -6,4 +6,4 @@ torch
 matplotlib
 wordcloud
 vaderSentiment
-
+spacy
