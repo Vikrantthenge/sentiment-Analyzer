@@ -32,15 +32,14 @@ with col2:
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
 
     # 🔀 Mode Selection: Basic vs NLP Pipeline
-    import spacy
+import spacy
 from spacy.cli import download
 
 try:
-   nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+    nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
 except OSError:
-    download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
-mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
+    st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
+    st.stop()
 
 if mode == "NLP Pipeline Demo":
     st.subheader("🧬 NLP Pipeline Output")
