@@ -31,6 +31,31 @@ with col1:
 with col2:
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
 
+    # 🔀 Mode Selection: Basic vs NLP Pipeline
+mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
+
+if mode == "NLP Pipeline Demo":
+    st.subheader("🧬 NLP Pipeline Output")
+    user_input = st.text_area("Enter text for NLP processing")
+    if user_input:
+        import spacy
+        nlp = spacy.load("en_core_web_sm")
+        doc = nlp(user_input)
+
+        st.markdown("**🔤 Tokens:**")
+        st.write([token.text for token in doc])
+
+        st.markdown("**🧾 Lemmas:**")
+        st.write([token.lemma_ for token in doc])
+
+        st.markdown("**🏷️ Named Entities:**")
+        st.write([(ent.text, ent.label_) for ent in doc.ents])
+
+        st.markdown("**📊 Part-of-Speech Tags:**")
+        st.write([(token.text, token.pos_) for token in doc])
+        
+    st.stop()  # Prevent rest of app from running in NLP mode
+
 # 📘 Sidebar Branding
 with st.sidebar:
     st.header("📘 About")
