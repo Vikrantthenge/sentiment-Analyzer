@@ -38,12 +38,15 @@ if mode == "NLP Pipeline Demo":
     user_input = st.text_area("Enter text for NLP processing")
 
     if user_input:
-        import spacy
-        try:
-            nlp = spacy.load("en_core_web_sm")
-        except OSError:
-            st.error("⚠️ spaCy model not found. Please add it to requirements.txt or run: python -m spacy download en_core_web_sm")
-            st.stop()
+       import spacy
+       from spacy.cli import download
+
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    st.warning("⚠️ Model not found. Downloading now...")
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
     if mode == "NLP Pipeline Demo":
      st.subheader("🧬 NLP Pipeline Output")
