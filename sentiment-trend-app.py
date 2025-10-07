@@ -49,16 +49,32 @@ mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
 
 if mode == "NLP Pipeline Demo":
     st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("Enter text for NLP processing")
+    user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
 
+    # ✅ Load spaCy model from bundled path
     try:
         nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
     except OSError:
-        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
+        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly at './en_core_web_sm/en_core_web_sm-3.8.0'")
         st.stop()
 
-    if user_input:
-     doc = nlp(user_input)
+    # ✅ Run NLP only if input is provided
+    if user_input and user_input.strip():
+        doc = nlp(user_input)
+
+        st.markdown("**🔤 Tokens:**")
+        st.write([f"🔹 {token.text}" for token in doc])
+
+        st.markdown("**🧾 Lemmas:**")
+        st.write([f"📄 {token.lemma_}" for token in doc])
+
+        st.markdown("**📊 POS Tags:**")
+        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+
+        # You can continue with entity mapping, wordclouds, POS chart, etc.
+    else:
+        st.info("ℹ️ Please enter some text to run the NLP pipeline.")
+
 
     # 🧠 Emoji Mapping for Entity Types
     ENTITY_EMOJI_MAP = {
