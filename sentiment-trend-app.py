@@ -45,11 +45,11 @@ import pandas as pd
 import plotly.express as px
 
 # 🔀 Mode Selection
-mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
+mode = st.radio("🔀 Choose Mode", ["🧠 Basic Sentiment", "🧬 NLP Pipeline Demo"])
 
-if mode == "NLP Pipeline Demo":
+if mode == "🧬 NLP Pipeline Demo":
     st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("Enter text for NLP processing")
+    user_input = st.text_area("💬 Enter text for NLP processing")
 
     try:
         nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
@@ -63,16 +63,16 @@ if mode == "NLP Pipeline Demo":
         # 🔍 NLP Breakdown in Expander
         with st.expander("🔍 View Full NLP Breakdown"):
             st.markdown("**🔤 Tokens:**")
-            st.write([token.text for token in doc])
+            st.write([f"🔹 {token.text}" for token in doc])
 
             st.markdown("**🧾 Lemmas:**")
-            st.write([token.lemma_ for token in doc])
+            st.write([f"📄 {token.lemma_}" for token in doc])
 
             st.markdown("**🏷️ Named Entities:**")
-            st.write([(ent.text, ent.label_) for ent in doc.ents])
+            st.write([f"🏷️ {ent.text} ({ent.label_})" for ent in doc.ents])
 
             st.markdown("**📊 POS Tags:**")
-            st.write([(token.text, token.pos_) for token in doc])
+            st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
         # ☁️ Word Cloud of Lemmas
         lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
