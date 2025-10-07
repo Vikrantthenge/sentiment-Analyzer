@@ -55,11 +55,11 @@ if mode == "Basic Sentiment":
         st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
 
 elif mode == "NLP Pipeline Demo":
-    st.markdown("### 🧠 NLP Pipeline Output 🎉")
     user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
 
     if user_input:
-        doc = nlp(user_input)
+        doc = nlp(user_input)  # ✅ Now safe — user_input is guaranteed
+        # Continue with NLP breakdown...
 
         # 🧠 Emoji Mapping
         ENTITY_EMOJI_MAP = {
