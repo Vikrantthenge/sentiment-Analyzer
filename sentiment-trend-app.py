@@ -58,21 +58,66 @@ if mode == "🧬 NLP Pipeline Demo":
         st.stop()
 
     if user_input:
-        doc = nlp(user_input)
+    doc = nlp(user_input)
 
-        # 🔍 NLP Breakdown in Expander
-        with st.expander("🔍 View Full NLP Breakdown"):
-            st.markdown("**🔤 Tokens:**")
-            st.write([f"🔹 {token.text}" for token in doc])
+    # 🧠 Emoji Mapping for Entity Types
+    ENTITY_EMOJI_MAP = {
+        "PERSON": "🧑",
+        "ORG": "🏢",
+        "GPE": "🌍",
+        "LOC": "📍",
+        "DATE": "📅",
+        "TIME": "⏰",
+        "MONEY": "💰",
+        "QUANTITY": "🔢",
+        "EVENT": "🎉",
+        "PRODUCT": "📦",
+        "LANGUAGE": "🗣️",
+        "NORP": "👥",
+        "FAC": "🏗️",
+        "LAW": "⚖️",
+        "WORK_OF_ART": "🎨"
+    }
 
-            st.markdown("**🧾 Lemmas:**")
-            st.write([f"📄 {token.lemma_}" for token in doc])
+    # 🔍 NLP Breakdown in Expander
+    with st.expander("🔍 View Full NLP Breakdown"):
+        st.markdown("**🔤 Tokens:**")
+        st.write([f"🔹 {token.text}" for token in doc])
 
-            st.markdown("**🏷️ Named Entities:**")
-            st.write([f"🏷️ {ent.text} ({ent.label_})" for ent in doc.ents])
+        st.markdown("**🧾 Lemmas:**")
+        st.write([f"📄 {token.lemma_}" for token in doc])
 
-            st.markdown("**📊 POS Tags:**")
-            st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+        st.markdown("**📊 POS Tags:**")
+        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+
+        # 🔄 Toggle for Entity View
+        st.markdown("**🏷️ Named Entities:**")
+        view_mode = st.radio("Choose entity view mode", ["Raw", Emoji-Mapped"])
+        if doc.ents:
+            if view_mode == "Raw":
+                st.write([(ent.text, ent.label_) for ent in doc.ents])
+            else:
+                styled_ents = [
+                    f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                    for ent in doc.ents
+                ]
+                st.write(styled_ents)
+        else:
+            st.info("ℹ️ No named entities found in the input.")
+
+        # 🌥️ Wordcloud Visualization
+        st.markdown("**🌥️ Wordcloud of Tokens:**")
+        from wordcloud import WordCloud
+        import matplotlib.pyplot as plt
+
+        token_text = " ".join([token.text for token in doc])
+        wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
+
+        fig, ax = plt.subplots()
+        ax.imshow(wc, interpolation="bilinear")
+        ax.axis("off")
+        st.pyplot(fig)
+
 
         # ☁️ Word Cloud of Lemmas
         lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
