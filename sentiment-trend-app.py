@@ -61,101 +61,74 @@ elif mode == "NLP Pipeline Demo":
     if user_input:
         doc = nlp(user_input)
 
-        # 🧬 NLP logic continues here...
-        # Tokens, Lemmas, POS, Entities, Wordclouds, POS Chart, etc.
+        # 🧠 Emoji Mapping
+        ENTITY_EMOJI_MAP = {
+            "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅", "TIME": "⏰",
+            "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦", "LANGUAGE": "🗣️",
+            "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
+        }
 
-# ✅ Run only if input is provided
-if user_input:
-    # 🔍 Sentiment Analysis
-    result = sentiment_pipeline(user_input)[0]
-    st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
+        with st.expander("🔍 View Full NLP Breakdown"):
+            st.markdown("**🔤 Tokens:**")
+            st.write([f"🔹 {token.text}" for token in doc])
 
-    # 🧬 NLP Pipeline
-    doc = nlp(user_input)
+            st.markdown("**🧾 Lemmas:**")
+            st.write([f"📄 {token.lemma_}" for token in doc])
 
-    # 🧠 Emoji Mapping for Entity Types
-    ENTITY_EMOJI_MAP = {
-        "PERSON": "🧑",
-        "ORG": "🏢",
-        "GPE": "🌍",
-        "LOC": "📍",
-        "DATE": "📅",
-        "TIME": "⏰",
-        "MONEY": "💰",
-        "QUANTITY": "🔢",
-        "EVENT": "🎉",
-        "PRODUCT": "📦",
-        "LANGUAGE": "🗣️",
-        "NORP": "👥",
-        "FAC": "🏗️",
-        "LAW": "⚖️",
-        "WORK_OF_ART": "🎨"
-    }
+            st.markdown("**📊 POS Tags:**")
+            st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
-    # 🔍 NLP Breakdown in Expander
-    with st.expander("🔍 View Full NLP Breakdown"):
-        st.markdown("**🔤 Tokens:**")
-        st.write([f"🔹 {token.text}" for token in doc])
+            st.markdown("**🏷️ Named Entities:**")
+            view_mode = st.radio("🔄 Choose entity view mode", ["🧾 Raw", "🏷️ Emoji-Mapped"], key="entity_view")
 
-        st.markdown("**🧾 Lemmas:**")
-        st.write([f"📄 {token.lemma_}" for token in doc])
-
-        st.markdown("**📊 POS Tags:**")
-        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
-
-        # 🔄 Toggle for Entity View
-        st.markdown("**🏷️ Named Entities:**")
-        view_mode = st.radio("🔄 Choose entity view mode", ["🧾 Raw", "🏷️ Emoji-Mapped"])
-
-        if doc.ents:
-            if view_mode == "🧾 Raw":
-                st.write([(ent.text, ent.label_) for ent in doc.ents])
+            if doc.ents:
+                if view_mode == "🧾 Raw":
+                    st.write([(ent.text, ent.label_) for ent in doc.ents])
+                else:
+                    styled_ents = [
+                        f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                        for ent in doc.ents
+                    ]
+                    st.write(styled_ents)
             else:
-                styled_ents = [
-                    f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
-                    for ent in doc.ents
-                ]
-                st.write(styled_ents)
-        else:
-            st.info("ℹ️ No named entities found in the input.")
+                st.info("ℹ️ No named entities found in the input.")
 
-        # 🌥️ Wordcloud of Tokens
-        st.markdown("**🌥️ Wordcloud of Tokens:**")
-        from wordcloud import WordCloud
-        import matplotlib.pyplot as plt
+            # 🌥️ Wordcloud of Tokens
+            from wordcloud import WordCloud
+            import matplotlib.pyplot as plt
 
-        token_text = " ".join([token.text for token in doc])
-        wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
+            token_text = " ".join([token.text for token in doc])
+            wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
 
-        fig, ax = plt.subplots()
-        ax.imshow(wc, interpolation="bilinear")
-        ax.axis("off")
-        st.pyplot(fig)
+            fig, ax = plt.subplots()
+            ax.imshow(wc, interpolation="bilinear")
+            ax.axis("off")
+            st.pyplot(fig)
 
-        # ☁️ Wordcloud of Lemmas
-        st.markdown("**☁️ Wordcloud of Lemmas:**")
-        lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
-        lemma_text = " ".join(lemmas)
+            # ☁️ Wordcloud of Lemmas
+            st.markdown("**☁️ Wordcloud of Lemmas:**")
+            lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
+            lemma_text = " ".join(lemmas)
 
-        wc_lemma = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
-        fig_wc, ax_wc = plt.subplots()
-        ax_wc.imshow(wc_lemma, interpolation="bilinear")
-        ax_wc.axis("off")
-        st.pyplot(fig_wc)
+            wc_lemma = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
+            fig_wc, ax_wc = plt.subplots()
+            ax_wc.imshow(wc_lemma, interpolation="bilinear")
+            ax_wc.axis("off")
+            st.pyplot(fig_wc)
 
-        # 📊 POS Tag Distribution Chart
-        import pandas as pd
-        import plotly.express as px
+            # 📊 POS Tag Distribution Chart
+            import pandas as pd
+            import plotly.express as px
 
-        pos_counts = {}
-        for token in doc:
-            pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
+            pos_counts = {}
+            for token in doc:
+                pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
 
-        pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
-        fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
-        st.plotly_chart(fig_pos)
+            pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
+            fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
+            st.plotly_chart(fig_pos)
 
-    st.stop()
+        st.stop()
 
 else:
     st.info("ℹ️ Please enter some text to analyze sentiment and entities.")
