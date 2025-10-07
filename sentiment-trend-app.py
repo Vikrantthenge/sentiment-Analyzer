@@ -37,22 +37,31 @@ import spacy
 from spacy.cli import download
 
 def main():
-    # 🔀 Mode Selection: Basic vs NLP Pipeline
-    mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
+    import streamlit as st
+import spacy
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.express as px
 
-    if mode == "NLP Pipeline Demo":
-        st.subheader("🧬 NLP Pipeline Output")
-        user_input = st.text_area("Enter text for NLP processing")
+# 🔀 Mode Selection
+mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
 
-        try:
-            nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-        except OSError:
-            st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
-            st.stop()
+if mode == "NLP Pipeline Demo":
+    st.subheader("🧬 NLP Pipeline Output")
+    user_input = st.text_area("Enter text for NLP processing")
 
-        if user_input:
-            doc = nlp(user_input)
+    try:
+        nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+    except OSError:
+        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
+        st.stop()
 
+    if user_input:
+        doc = nlp(user_input)
+
+        # 🔍 NLP Breakdown in Expander
+        with st.expander("🔍 View Full NLP Breakdown"):
             st.markdown("**🔤 Tokens:**")
             st.write([token.text for token in doc])
 
@@ -65,10 +74,27 @@ def main():
             st.markdown("**📊 POS Tags:**")
             st.write([(token.text, token.pos_) for token in doc])
 
-        st.stop()
+        # ☁️ Word Cloud of Lemmas
+        lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
+        lemma_text = " ".join(lemmas)
 
-if __name__ == "__main__":
-    main()
+        st.markdown("**☁️ Word Cloud of Lemmas:**")
+        wc = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
+        fig_wc, ax_wc = plt.subplots()
+        ax_wc.imshow(wc, interpolation="bilinear")
+        ax_wc.axis("off")
+        st.pyplot(fig_wc)
+
+        # 📊 POS Tag Distribution Chart
+        pos_counts = {}
+        for token in doc:
+            pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
+
+        pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
+        fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
+        st.plotly_chart(fig_pos)
+
+    st.stop()
 
 # 📘 Sidebar Branding
 with st.sidebar:
