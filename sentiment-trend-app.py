@@ -57,7 +57,7 @@ if mode == "🧬 NLP Pipeline Demo":
         st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
         st.stop()
 
-   if user_input:
+if user_input:
     doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
