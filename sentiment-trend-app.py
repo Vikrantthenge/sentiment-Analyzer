@@ -45,6 +45,11 @@ if mode == "NLP Pipeline Demo":
             st.error("⚠️ spaCy model not found. Please add it to requirements.txt or run: python -m spacy download en_core_web_sm")
             st.stop()
 
+    if mode == "NLP Pipeline Demo":
+     st.subheader("🧬 NLP Pipeline Output")
+    user_input = st.text_area("Enter text for NLP processing")
+
+    if user_input:
         doc = nlp(user_input)
 
         st.markdown("**🔤 Tokens:**")
@@ -56,11 +61,11 @@ if mode == "NLP Pipeline Demo":
         st.markdown("**🏷️ Named Entities:**")
         st.write([(ent.text, ent.label_) for ent in doc.ents])
 
-        st.markdown("**📊 Part-of-Speech Tags:**")
+        st.markdown("**📊 POS Tags:**")
         st.write([(token.text, token.pos_) for token in doc])
 
-    st.stop()  # Prevent rest of app from running in NLP mode
-    
+    st.stop()
+
 # 📘 Sidebar Branding
 with st.sidebar:
     st.header("📘 About")
