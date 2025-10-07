@@ -30,43 +30,6 @@ with col1:
     st.image("logo.png", width=100)
 with col2:
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
-# 🔀 Mode Selection: Basic vs NLP Pipeline
-mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
-
-if mode == "NLP Pipeline Demo":
-    st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("Enter text for NLP processing")
-
-    if user_input:
-       import spacyfrom spacy.cli import download
-
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    st.warning("⚠️ Model not found. Downloading now...")
-    download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
-
-    if mode == "NLP Pipeline Demo":
-     st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("Enter text for NLP processing")
-
-    if user_input:
-        doc = nlp(user_input)
-
-        st.markdown("**🔤 Tokens:**")
-        st.write([token.text for token in doc])
-
-        st.markdown("**🧾 Lemmas:**")
-        st.write([token.lemma_ for token in doc])
-
-        st.markdown("**🏷️ Named Entities:**")
-        st.write([(ent.text, ent.label_) for ent in doc.ents])
-
-        st.markdown("**📊 POS Tags:**")
-        st.write([(token.text, token.pos_) for token in doc])
-
-    st.stop()
 
 # 📘 Sidebar Branding
 with st.sidebar:
@@ -212,7 +175,6 @@ if "date" in df.columns:
         )
         st.plotly_chart(fig_heatmap, use_container_width=True)
 
-
         # 📊 Diverging Sentiment Bar Chart
         st.markdown("### 📊 Diverging Sentiment by Date")
         div_df = df.groupby(["date", "sentiment"]).size().unstack(fill_value=0).reset_index()
@@ -303,7 +265,6 @@ st.markdown("""
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
 """, unsafe_allow_html=True)
 
-
 st.markdown("""
 <div style='text-align: center; font-size:16px; font-weight:normal; color:#343a40; line-height:1.2;'>
 🔍 Powered by NLP & CX Intelligence — Built for Airline Feedback Precision.<br>
@@ -319,5 +280,6 @@ st.markdown("""
 
 
 
-
                                  
+
+
