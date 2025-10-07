@@ -45,19 +45,24 @@ import pandas as pd
 import plotly.express as px
 
 # 🔀 Mode Selection
-mode = st.radio("🔀 Choose Mode", ["🧠 Basic Sentiment", "🧬 NLP Pipeline Demo"])
+mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
 
-if mode == "🧬 NLP Pipeline Demo":
-    st.subheader("🧬 NLP Pipeline Output")
-user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
-try:
-     nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-except OSError:
-        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
-        st.stop()
+if mode == "Basic Sentiment":
+    user_input = st.text_area("💬 Enter text for NLP processing", key="basic_input")
 
-# 📥 Text Input
-user_input = st.text_area("💬 Enter text for NLP processing")
+    if user_input:
+        result = sentiment_pipeline(user_input)[0]
+        st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
+
+elif mode == "NLP Pipeline Demo":
+    st.markdown("### 🧠 NLP Pipeline Output 🎉")
+    user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
+
+    if user_input:
+        doc = nlp(user_input)
+
+        # 🧬 NLP logic continues here...
+        # Tokens, Lemmas, POS, Entities, Wordclouds, POS Chart, etc.
 
 # ✅ Run only if input is provided
 if user_input:
