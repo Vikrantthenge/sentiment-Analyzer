@@ -59,26 +59,9 @@ if mode == "NLP Pipeline Demo":
         st.stop()
 
     # ✅ Run NLP only if input is provided
-    if user_input and user_input.strip():
-        try:
-            doc = nlp(user_input)
 
-            with st.expander("🔍 View Full NLP Breakdown"):
-                st.markdown("**🔤 Tokens:**")
-                st.write([f"🔹 {token.text}" for token in doc])
-
-                st.markdown("**🧾 Lemmas:**")
-                st.write([f"📄 {token.lemma_}" for token in doc])
-
-                st.markdown("**📊 POS Tags:**")
-                st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
-
-                # You can continue with entity mapping, wordclouds, POS chart, etc.
-        except Exception as e:
-            st.error(f"⚠️ NLP processing failed: {e}")
-    else:
-        st.info("ℹ️ Please enter some text to run the NLP pipeline.")
-
+    if user_input:
+    doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
     ENTITY_EMOJI_MAP = {
@@ -107,8 +90,19 @@ if mode == "NLP Pipeline Demo":
         st.markdown("**🧾 Lemmas:**")
         st.write([f"📄 {token.lemma_}" for token in doc])
 
+        st.markdown("**🏷️ Named Entities (Auto-Mapped):**")
+        if doc.ents:
+            styled_ents = [
+                f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                for ent in doc.ents
+            ]
+            st.write(styled_ents)
+        else:
+            st.info("ℹ️ No named entities found in the input.")
+
         st.markdown("**📊 POS Tags:**")
         st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+    
 
         # 🔄 Toggle for Entity View
         st.markdown("**🏷️ Named Entities:**")
