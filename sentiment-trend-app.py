@@ -36,7 +36,7 @@ with col2:
 from spacy.cli import download
 
 try:
-    nlp = spacy.load("en_core_web_sm")
+   nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
 except OSError:
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
