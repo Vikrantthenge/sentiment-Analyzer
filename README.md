@@ -83,6 +83,39 @@ Every push to `main` triggers automated validation and deployment, ensuring clea
 
 ---
 
+## ✈️ Airline NLP Pipeline Demo
+
+🔍 Explore named entity recognition with emoji-mapped clarity — tuned for airline apps and passenger data.
+
+| Feature | Description |
+|--------|-------------|
+| 🧬 NLP Pipeline | Tokenization, Lemmatization, POS tagging |
+| 🏷️ Entity Mapping | Auto-decorated with emojis for PERSON, ORG, GPE, DATE, MONEY, TIME |
+| 🌥️ Wordclouds | Token and Lemma-based visual summaries |
+| 📊 POS Chart | Interactive bar chart via Plotly |
+| 🔄 Entity Toggle | Switch between Raw and Emoji-Mapped views |
+
+🚀 Sample Input:  
+> John booked a flight with Indigo Airlines from Mumbai to Dubai on October 15th, 2025. He paid ₹32,000 and requested a vegetarian meal. The flight departs at 9:30 AM and arrives at 12:45 PM local time.
+
+🧑 John (PERSON)  
+🏢 Indigo Airlines (ORG)  
+🌍 Mumbai → Dubai (GPE)  
+📅 October 15th, 2025 (DATE)  
+💰 ₹32,000 (MONEY)  
+⏰ 9:30 AM → 12:45 PM (TIME)
+
+---
+
+### 🔗 Launch Demo
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://sentiment-analyzer-vikrant.streamlit.app)
+
+📦 Powered by `spaCy`, `Streamlit`, `WordCloud`, `Plotly`  
+🧠 Branded by VT | Built for recruiter clarity
+
+---
+
 ## 📄 Sample CSV Format
 
 ```csv
