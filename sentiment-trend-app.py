@@ -90,19 +90,37 @@ if mode == "NLP Pipeline Demo":
         st.markdown("**🧾 Lemmas:**")
         st.write([f"📄 {token.lemma_}" for token in doc])
 
-        st.markdown("**🏷️ Named Entities (Auto-Mapped):**")
+        st.markdown("**📊 POS Tags:**")
+        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+
+        # 🔄 Toggle for Entity View
+        st.markdown("**🏷️ Named Entities:**")
+        view_mode = st.radio("Choose entity view mode", ["Raw", Emoji-Mapped"])
         if doc.ents:
-            styled_ents = [
-                f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
-                for ent in doc.ents
-            ]
-            st.write(styled_ents)
+            if view_mode == "Raw":
+                st.write([(ent.text, ent.label_) for ent in doc.ents])
+            else:
+                styled_ents = [
+                    f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                    for ent in doc.ents
+                ]
+                st.write(styled_ents)
         else:
             st.info("ℹ️ No named entities found in the input.")
 
-        st.markdown("**📊 POS Tags:**")
-        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
-    
+        # 🌥️ Wordcloud Visualization
+        st.markdown("**🌥️ Wordcloud of Tokens:**")
+        from wordcloud import WordCloud
+        import matplotlib.pyplot as plt
+
+        token_text = " ".join([token.text for token in doc])
+        wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
+
+        fig, ax = plt.subplots()
+        ax.imshow(wc, interpolation="bilinear")
+        ax.axis("off")
+        st.pyplot(fig)
+
 
         # 🔄 Toggle for Entity View
         st.markdown("**🏷️ Named Entities:**")
