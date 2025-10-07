@@ -57,7 +57,16 @@ if mode == "🧬 NLP Pipeline Demo":
         st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
         st.stop()
 
+# 📥 Text Input
+user_input = st.text_area("💬 Enter text for NLP processing")
+
+# ✅ Run only if input is provided
 if user_input:
+    # 🔍 Sentiment Analysis
+    result = sentiment_pipeline(user_input)[0]
+    st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
+
+    # 🧬 NLP Pipeline
     doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
@@ -143,6 +152,9 @@ if user_input:
         st.plotly_chart(fig_pos)
 
     st.stop()
+
+else:
+    st.info("ℹ️ Please enter some text to analyze sentiment and entities.")
 
 
 # 📘 Sidebar Branding
