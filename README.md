@@ -1,13 +1,23 @@
 ## ✈️ Airline Sentiment Analyzer
 
 **Built by Vikrant Thenge — NLP Strategist & Dashboard Architect**  
-[![Location](https://img.shields.io/badge/Mumbai-based-6c757d?logo=googlemaps)](https://www.google.com/maps/place/Mumbai)
-[![Recruiter](https://img.shields.io/badge/Recruiter-Facing-0078D4?logo=target)](https://www.linkedin.com/in/vthenge)
+[![Location](https://img.shields.io/badge/Mumbai-based-6c757d?logo=googlemaps)](https://www.google.com/maps/place/Mumbai)  
+[![Recruiter](https://img.shields.io/badge/Recruiter-Facing-0078D4?logo=target)](https://www.linkedin.com/in/vthenge)  
 [![CX](https://img.shields.io/badge/CX-Intelligence-00C853?logo=insights)](https://sentiment-analyzer-vikrant.streamlit.app)
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)
-[![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
+[![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)  
 [![CI Status](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml/badge.svg)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml)
+
+---
+
+### 🚀 Launch & Capabilities
+
+<p align="center">
+  <a href="https://sentiment-analyzer-vikrant.streamlit.app"><img src="https://img.shields.io/badge/Live%20App-Launch-green?style=for-the-badge&logo=streamlit"></a>
+  <img src="https://img.shields.io/badge/NLP%20Pipeline-Enabled-blue?style=for-the-badge&logo=spacy">
+  <img src="https://img.shields.io/badge/Visual%20Insights-WordCloud%20%26%20POS-orange?style=for-the-badge&logo=plotly">
+</p>
 
 ---
 
@@ -28,6 +38,9 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 ⚠️ **CX Alert System** for spikes in negative sentiment  
 📁 **CSV Upload** or use the default demo file  
 🎨 **Animated branding**, sidebar polish, and footer badges  
+🧬 **NLP Pipeline Demo** with tokenization, lemmatization, entity recognition  
+☁️ **Word Cloud of Lemmas** for theme discovery  
+📊 **POS Tag Distribution** chart for linguistic breakdown
 
 ---
 
@@ -38,6 +51,7 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 📊 **Plotly** for interactive charts  
 🖼️ **Matplotlib & WordCloud** for visual NLP  
 📐 **Pandas** for data wrangling  
+🧬 **spaCy** for NLP pipeline tasks  
 🔄 **GitHub Actions** for CI/CD automation
 
 ---
@@ -46,11 +60,26 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 
 This project uses **GitHub Actions** for Continuous Integration:
 
-- ✅ Lint checks via `flake8`
-- ✅ Optional unit tests via `pytest`
+- ✅ Lint checks via `flake8`  
+- ✅ Optional unit tests via `pytest`  
 - ✅ Auto-deployment via Streamlit Cloud
 
 Every push to `main` triggers automated validation and deployment, ensuring clean, reliable code with zero manual effort.
+
+---
+
+## ✨ Sample NLP Output
+
+**Input:**  
+`The flight from Mumbai to Delhi had no entertainment and poor service.`
+
+**Output:**  
+- 🔤 Tokens: `["The", "flight", "from", "Mumbai", "to", "Delhi", "had", "no", "entertainment", "and", "poor", "service"]`  
+- 🧾 Lemmas: `["the", "flight", "from", "Mumbai", "to", "Delhi", "have", "no", "entertainment", "and", "poor", "service"]`  
+- 🏷️ Named Entities: `Mumbai (GPE), Delhi (GPE)`  
+- 📊 POS Tags: `NOUN, PROPN, VERB, ADJ...`  
+- ☁️ Word Cloud: Highlights `"entertainment"`, `"service"`, `"poor"`  
+- 📊 POS Chart: Shows noun/verb/adjective distribution
 
 ---
 
@@ -61,4 +90,3 @@ date,airline,text
 01-06-2025,Indigo,Amazing experience! Flight was on time and crew was very friendly.
 02-06-2025,Air India,Worst flight ever. Extremely delayed and no communication.
 ...
-
