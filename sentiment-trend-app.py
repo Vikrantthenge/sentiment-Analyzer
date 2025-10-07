@@ -61,7 +61,7 @@ if mode == "NLP Pipeline Demo":
     # ✅ Run NLP only if input is provided
 
     if user_input:
-    doc = nlp(user_input)
+     doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
     ENTITY_EMOJI_MAP = {
