@@ -33,35 +33,48 @@ with col2:
 
     # 🔀 Mode Selection: Basic vs NLP Pipeline
 import streamlit as st
-import spacy
-from spacy.cli import download
-
-def main():
-    import streamlit as st
+from transformers import pipeline
 import spacy
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
 
-# 🔀 Mode Selection
+# 🧠 Load Models with Caching
+@st.cache_resource
+def load_sentiment_pipeline():
+    return pipeline("sentiment-analysis")
+
+@st.cache_resource
+def load_spacy_model():
+    return spacy.load("en_core_web_sm")
+
+sentiment_pipeline = load_sentiment_pipeline()
+nlp = load_spacy_model()
+
+# 🎛️ Mode Selection
 mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
 
+# ✈️ Basic Sentiment Mode
 if mode == "Basic Sentiment":
     user_input = st.text_area("💬 Enter text for NLP processing", key="basic_input")
 
     if user_input:
-        result = sentiment_pipeline(user_input)[0]
-        st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
+        try:
+            result = sentiment_pipeline(user_input)[0]
+            st.markdown(f"**🧭 Sentiment:** `{result['label']}` with `{round(result['score'] * 100, 2)}%` confidence")
+        except Exception as e:
+            st.error(f"⚠️ Sentiment analysis failed: {e}")
+    else:
+        st.info("ℹ️ Please enter some text to analyze sentiment.")
 
+# 🧬 NLP Pipeline Mode
 elif mode == "NLP Pipeline Demo":
     user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
 
     if user_input:
-        doc = nlp(user_input)  # ✅ Now safe — user_input is guaranteed
-        # Continue with NLP breakdown...
+        doc = nlp(user_input)
 
-        # 🧠 Emoji Mapping
         ENTITY_EMOJI_MAP = {
             "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅", "TIME": "⏰",
             "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦", "LANGUAGE": "🗣️",
@@ -94,9 +107,6 @@ elif mode == "NLP Pipeline Demo":
                 st.info("ℹ️ No named entities found in the input.")
 
             # 🌥️ Wordcloud of Tokens
-            from wordcloud import WordCloud
-            import matplotlib.pyplot as plt
-
             token_text = " ".join([token.text for token in doc])
             wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
 
@@ -117,9 +127,6 @@ elif mode == "NLP Pipeline Demo":
             st.pyplot(fig_wc)
 
             # 📊 POS Tag Distribution Chart
-            import pandas as pd
-            import plotly.express as px
-
             pos_counts = {}
             for token in doc:
                 pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
@@ -129,9 +136,8 @@ elif mode == "NLP Pipeline Demo":
             st.plotly_chart(fig_pos)
 
         st.stop()
-
-else:
-    st.info("ℹ️ Please enter some text to analyze sentiment and entities.")
+    else:
+        st.info("ℹ️ Please enter some text to run the NLP pipeline.")
 
 
 # 📘 Sidebar Branding
