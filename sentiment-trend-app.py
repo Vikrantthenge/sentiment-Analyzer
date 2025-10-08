@@ -59,6 +59,10 @@ if mode == "NLP Pipeline Demo":
         st.stop()
 
     # ✅ Run NLP only if input is provided
+import streamlit as st
+
+# 📝 Capture user input
+user_input = st.text_input("💬 Enter text for NLP analysis:")
 
 if user_input:
     doc = nlp(user_input)
