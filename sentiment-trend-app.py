@@ -31,50 +31,55 @@ def get_base64_image(image_path):
 
 image_base64 = get_base64_image("gradient_plane.png")
 
-# Inject CSS + HTML
-st.markdown(f"""
-<style>
-@keyframes typing {{
-  from {{ width: 0 }}
-  to {{ width: 100% }}
-}}
+# Layout with logo + animated header block
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.image("logo.png", width=100)
 
-@keyframes blink {{
-  50% {{ border-color: transparent }}
-}}
+with col2:
+    st.markdown(f"""
+    <style>
+    @keyframes typing {{
+      from {{ width: 0 }}
+      to {{ width: 100% }}
+    }}
 
-@keyframes fly {{
-  0%   {{ left: -60px; opacity: 0 }}
-  30%  {{ opacity: 1 }}
-  100% {{ left: 420px; opacity: 0 }}
-}}
+    @keyframes blink {{
+      50% {{ border-color: transparent }}
+    }}
 
-.typing-header {{
-  font-size: 32px;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 3px solid #0078D4;
-  width: 0;
-  animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
-  color: #0078D4;
-  margin-bottom: 20px;
-  position: relative;
-}}
+    @keyframes fly {{
+      0%   {{ left: -60px; opacity: 0 }}
+      30%  {{ opacity: 1 }}
+      100% {{ left: 420px; opacity: 0 }}
+    }}
 
-.flight-img {{
-  position: absolute;
-  animation: fly 4s linear infinite;
-  top: -40px;
-  width: 80px;
-}}
-</style>
+    .typing-header {{
+      font-size: 32px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid #0078D4;
+      width: 0;
+      animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+      color: #0078D4;
+      margin-bottom: 20px;
+      position: relative;
+    }}
 
-<div style="position: relative;">
-  <img src="data:image/png;base64,{image_base64}" class="flight-img">
-  <div class="typing-header">Airline Sentiment Analyzer by Vikrant</div>
-</div>
-""", unsafe_allow_html=True)
+    .flight-img {{
+      position: absolute;
+      animation: fly 4s linear infinite;
+      top: -40px;
+      width: 80px;
+    }}
+    </style>
+
+    <div style="position: relative;">
+      <img src="data:image/png;base64,{image_base64}" class="flight-img">
+      <div class="typing-header">Airline Sentiment Analyzer by Vikrant</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # 🔀 Mode Selection
