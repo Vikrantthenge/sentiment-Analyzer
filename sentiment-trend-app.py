@@ -19,15 +19,16 @@ st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="cente
 # 🖼️ Logo + Animated Header
 # 🖼️ Logo + Animated Header with ✈️ Flight
 # 🖼️ Logo + Animated Header with ✈️ Flight aligned to "Vikrant"
+# 🖼️ Logo + Gradient Plane Animation + Typing Header
 st.markdown("""
 <style>
 @keyframes typing { from { width: 0 } to { width: 100% } }
 @keyframes blink { 50% { border-color: transparent } }
 
 @keyframes fly {
-  0%   { left: -50px; opacity: 0; }
-  40%  { opacity: 1; }
-  100% { left: 420px; opacity: 0; }  /* Adjust this value to align with "Vikrant" */
+  0%   { left: -60px; opacity: 0; }
+  30%  { opacity: 1; }
+  100% { left: 420px; opacity: 0; }  /* Adjust to align with "Vikrant" */
 }
 
 .typing-header {
@@ -38,11 +39,11 @@ st.markdown("""
   position: relative;
 }
 
-.flight-icon {
+.flight-img {
   position: absolute;
   animation: fly 4s linear infinite;
-  font-size: 28px;
-  top: -30px;
+  top: -40px;
+  height: 28px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -51,8 +52,9 @@ col1, col2 = st.columns([1, 5])
 with col1:
     st.image("logo.png", width=100)
 with col2:
-    st.markdown("<div class='flight-icon'>✈️</div>", unsafe_allow_html=True)
+    st.markdown("<img src='gradient_plane.png' class='flight-img'>", unsafe_allow_html=True)
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
+
 
 
 # 🔀 Mode Selection
