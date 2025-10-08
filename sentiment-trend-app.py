@@ -66,32 +66,64 @@ user_input = st.text_input("💬 Enter text for NLP analysis:")
 
 if user_input:
     # 🧠 Sentiment Analysis Block
- st.markdown("## 📈 Sentiment Analysis")
+ # 📈 Sentiment Analysis Section
+st.markdown("## 💬 Sentiment Analysis")
 
-try:
-    # 🤖 Hugging Face Pipeline
-    from transformers import pipeline
-    hf_pipeline = pipeline("sentiment-analysis")
-    sentiment = hf_pipeline(user_input)
+# 🧠 Load Hugging Face Pipeline
+from transformers import pipeline
+hf_pipeline = pipeline("sentiment-analysis")
 
-    # 🧾 Display Hugging Face Result
-    st.markdown("### 🤖 Hugging Face Sentiment")
-    st.write(sentiment)
+# ✅ Check for user input
+user_input = st.text_input("💬 Enter text for sentiment analysis:")
 
-except Exception as e:
-    # ⚠️ Fallback to VADER
-    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+if user_input.strip():
+    try:
+        # 🤖 Hugging Face Sentiment
+        sentiment = hf_pipeline(user_input)
+        label = sentiment[0]["label"]
+        score = round(sentiment[0]["score"], 3)
 
-    import nltk
-    from nltk.sentiment.vader import SentimentIntensityAnalyzer
-    nltk.download("vader_lexicon", quiet=True)
+        # 🧾 Display Hugging Face Result
+        st.markdown("### 🤖 Hugging Face Sentiment")
+        st.write({
+            "Label": label,
+            "Confidence Score": score
+        })
 
-    vader = SentimentIntensityAnalyzer()
-    sentiment_scores = vader.polarity_scores(user_input)
+        # 🧠 Emoji-Mapped Sentiment Label
+        emoji_label = (
+            "😊 Positive" if label == "POSITIVE" else
+            "😞 Negative" if label == "NEGATIVE" else
+            "😐 Neutral"
+        )
+        st.markdown(f"**Sentiment:** {emoji_label}")
 
-    # 🛟 Display VADER Result
-    st.markdown("### 🛟 VADER Sentiment Fallback")
-    st.write(sentiment_scores)
+    except Exception as e:
+        # ⚠️ Hugging Face Failed — Fallback to VADER
+        st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+
+        import nltk
+        from nltk.sentiment.vader import SentimentIntensityAnalyzer
+        nltk.download("vader_lexicon", quiet=True)
+
+        vader = SentimentIntensityAnalyzer()
+        sentiment_scores = vader.polarity_scores(user_input)
+
+        # 🛟 Display VADER Result
+        st.markdown("### 🛟 VADER Sentiment Fallback")
+        st.write(sentiment_scores)
+
+        # 🧠 Emoji-Mapped Sentiment Label
+        compound = sentiment_scores["compound"]
+        emoji_label = (
+            "😊 Positive" if compound > 0.05 else
+            "😐 Neutral" if -0.05 <= compound <= 0.05 else
+            "😞 Negative"
+        )
+        st.markdown(f"**Sentiment:** {emoji_label}")
+else:
+    st.info("ℹ️ Please enter some text above to run sentiment analysis.")
+
 
     # 🧠 Emoji-Mapped Sentiment Label
     compound = sentiment_scores["compound"]
