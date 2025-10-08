@@ -18,14 +18,16 @@ st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="cente
 
 # 🖼️ Logo + Animated Header
 # 🖼️ Logo + Animated Header with ✈️ Flight
+# 🖼️ Logo + Animated Header with ✈️ Flight aligned to "Vikrant"
 st.markdown("""
 <style>
 @keyframes typing { from { width: 0 } to { width: 100% } }
 @keyframes blink { 50% { border-color: transparent } }
+
 @keyframes fly {
-  0%   { transform: translateX(-100px); opacity: 0; }
-  50%  { opacity: 1; }
-  100% { transform: translateX(100%); opacity: 0; }
+  0%   { left: -50px; opacity: 0; }
+  40%  { opacity: 1; }
+  100% { left: 420px; opacity: 0; }  /* Adjust this value to align with "Vikrant" */
 }
 
 .typing-header {
@@ -33,15 +35,14 @@ st.markdown("""
   overflow: hidden; border-right: 3px solid #0078D4;
   width: 0; animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
   color: #0078D4; margin-bottom: 20px;
+  position: relative;
 }
 
 .flight-icon {
-  position: relative;
-  display: inline-block;
+  position: absolute;
   animation: fly 4s linear infinite;
   font-size: 28px;
-  top: -10px;
-  left: 0;
+  top: -30px;
 }
 </style>
 """, unsafe_allow_html=True)
