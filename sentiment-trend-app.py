@@ -89,22 +89,44 @@ except Exception as e:
     vader = SentimentIntensityAnalyzer()
     sentiment_scores = vader.polarity_scores(user_input)
 
-    # 🛟 Display VADER Result
-    st.markdown("### 🛟 VADER Sentiment Fallback")
-    st.write(sentiment_scores)
+ # 🛟 Display VADER Result
+st.markdown("### 🛟 VADER Sentiment Fallback")
+st.write(sentiment_scores)
 
-    # 🧠 Emoji-Mapped Sentiment Label
-    compound = sentiment_scores["compound"]
-    label = (
-        "😊 Positive" if compound > 0.05 else
-        "😐 Neutral" if -0.05 <= compound <= 0.05 else
-        "😞 Negative"
-    )
-    st.markdown(f"**Sentiment:** {label}")
-    doc = nlp(user_input)
+# 🎛️ Toggle: Emoji vs Plain Text
+display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
+
+# 🧠 Sentiment Label Mapping
+def get_vader_label(compound_score):
+    if display_mode == "😊 Emoji View":
+        return (
+            "😊 Positive" if compound_score > 0.05 else
+            "😐 Neutral" if -0.05 <= compound_score <= 0.05 else
+            "😞 Negative"
+        )
+    else:
+        return (
+            "Positive" if compound_score > 0.05 else
+            "Neutral" if -0.05 <= compound_score <= 0.05 else
+            "Negative"
+        )
+
+# 🧾 Display VADER Sentiment Label
+compound = sentiment_scores["compound"]
+label = get_vader_label(compound)
+st.markdown(f"**Sentiment:** {label}")
+
+# 🔄 Continue with NLP breakdown
+doc = nlp(user_input)
+ENTITY_EMOJI_MAP = {
+    "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅",
+    "TIME": "⏰", "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦",
+    "LANGUAGE": "🗣️", "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
+}
+doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
-    ENTITY_EMOJI_MAP = {
+ENTITY_EMOJI_MAP = {
         "PERSON": "🧑",
         "ORG": "🏢",
         "GPE": "🌍",
@@ -123,7 +145,7 @@ except Exception as e:
     }
 
     # 🔍 NLP Breakdown in Expander
-    with st.expander("🔍 View Full NLP Breakdown"):
+with st.expander("🔍 View Full NLP Breakdown"):
         st.markdown("**🔤 Tokens:**")
         st.write([f"🔹 {token.text}" for token in doc])
 
@@ -185,7 +207,7 @@ except Exception as e:
         fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
         st.plotly_chart(fig_pos)
 
-    st.stop()
+st.stop()
 
 # 📘 Sidebar Branding
 with st.sidebar:
