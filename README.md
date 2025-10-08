@@ -54,6 +54,13 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 🧬 **spaCy** for NLP pipeline tasks  
 🔄 **GitHub Actions** for CI/CD automation
 
+![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit)
+![Transformers](https://img.shields.io/badge/HuggingFace-DistilBERT-yellow?logo=huggingface)
+![Plotly](https://img.shields.io/badge/Plotly-Charts-orange?logo=plotly)
+![spaCy](https://img.shields.io/badge/spaCy-NLP-blue?logo=spacy)
+![WordCloud](https://img.shields.io/badge/WordCloud-Visuals-lightgrey?logo=python)
+![Pandas](https://img.shields.io/badge/Pandas-Wrangling-black?logo=pandas)
+
 ---
 
 ## 🔄 CI/CD Integration
