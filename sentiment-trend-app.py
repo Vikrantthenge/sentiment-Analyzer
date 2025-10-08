@@ -92,6 +92,26 @@ except Exception as e:
  # 🛟 Display VADER Result
 st.markdown("### 🛟 VADER Sentiment Fallback")
 st.write(sentiment_scores)
+try:
+    sentiment = hf_pipeline(user_input)
+    # Hugging Face output block here...
+
+except Exception as e:
+    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+
+    import nltk
+    from nltk.sentiment.vader import SentimentIntensityAnalyzer
+    nltk.download("vader_lexicon", quiet=True)
+
+    vader = SentimentIntensityAnalyzer()
+    sentiment_scores = vader.polarity_scores(user_input)
+
+    # ✅ Safe to use sentiment_scores here
+    st.markdown("### 🛟 VADER Sentiment Fallback")
+    st.write(sentiment_scores)
+
+    # 🎛️ Toggle block and emoji mapping here...
+
 
 # 🎛️ Toggle: Emoji vs Plain Text
 display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
