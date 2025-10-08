@@ -92,10 +92,10 @@ except Exception as e:
  # 🛟 Display VADER Result
 st.markdown("### 🛟 VADER Sentiment Fallback")
 st.write(sentiment_scores)
+
+    # Hugging Face output block here...
 try:
     sentiment = hf_pipeline(user_input)
-    # Hugging Face output block here...
-
 except Exception as e:
     st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
 
