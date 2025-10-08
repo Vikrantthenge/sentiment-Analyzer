@@ -20,33 +20,34 @@ st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="cente
 # 🖼️ Logo + Animated Header with ✈️ Flight
 # 🖼️ Logo + Animated Header with ✈️ Flight aligned to "Vikrant"
 # 🖼️ Logo + Gradient Plane Animation + Typing Header
-st.markdown("""
+import base64
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+image_base64 = get_base64_image("gradient_plane.png")
+
+st.markdown(f"""
 <style>
-@keyframes typing { from { width: 0 } to { width: 100% } }
-@keyframes blink { 50% { border-color: transparent } }
+@keyframes fly {{
+  0%   {{ left: -60px; opacity: 0; }}
+  30%  {{ opacity: 1; }}
+  100% {{ left: 420px; opacity: 0; }}
+}}
 
-@keyframes fly {
-  0%   { left: -60px; opacity: 0; }
-  30%  { opacity: 1; }
-  100% { left: 420px; opacity: 0; }  /* Adjust to align with "Vikrant" */
-}
-
-.typing-header {
-  font-size: 32px; font-weight: bold; white-space: nowrap;
-  overflow: hidden; border-right: 3px solid #0078D4;
-  width: 0; animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
-  color: #0078D4; margin-bottom: 20px;
-  position: relative;
-}
-
-.flight-img {
+.flight-img {{
   position: absolute;
   animation: fly 4s linear infinite;
   top: -40px;
   height: 28px;
-}
+}}
 </style>
+
+<img src="data:image/png;base64,{image_base64}" class="flight-img">
 """, unsafe_allow_html=True)
+
 
 col1, col2 = st.columns([1, 5])
 with col1:
