@@ -1,12 +1,17 @@
+# 📦 Imports
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
 from transformers import pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from wordcloud import WordCloud, STOPWORDS
-import matplotlib.pyplot as plt
+import spacy
+import nltk
 import random
 import re
+
+nltk.download("vader_lexicon", quiet=True)
 
 # 🌐 Page Config
 st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
@@ -31,163 +36,161 @@ with col1:
 with col2:
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
 
-    # 🔀 Mode Selection: Basic vs NLP Pipeline
-import streamlit as st
-import spacy
-from spacy.cli import download
-
-def main():
-    import streamlit as st
-import spacy
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-import pandas as pd
-import plotly.express as px
-
 # 🔀 Mode Selection
-mode = st.radio("Choose Mode", ["Basic Sentiment", "NLP Pipeline Demo"])
+mode = st.radio("Choose Mode", ["⚡ Basic Sentiment", "🧬 NLP Pipeline Demo"])
 
-if mode == "NLP Pipeline Demo":
-    st.subheader("🧬 NLP Pipeline Output")
-    user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
+# 🤖 Load Hugging Face Pipeline
+try:
+    hf_pipeline = pipeline("sentiment-analysis")
+    huggingface_available = True
+except Exception:
+    huggingface_available = False
 
-    # ✅ Load spaCy model from bundled path
-    try:
-        nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-    except OSError:
-        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly at './en_core_web_sm/en_core_web_sm-3.8.0'")
-        st.stop()
+# 🧠 VADER Fallback
+vader = SentimentIntensityAnalyzer()
 
-    # ✅ Run NLP only if input is provided
-import streamlit as st
+# ✨ Basic Sentiment Mode
+if mode == "⚡ Basic Sentiment":
+    st.markdown("## ⚡ Quick Sentiment Check")
+    user_input = st.text_input("💬 Enter text for sentiment check", key="basic_input")
 
-# 📈 Sentiment Analysis Section
-st.markdown("## 💬 Sentiment Analysis")
+    if user_input.strip():
+        try:
+            sentiment = hf_pipeline(user_input)
+            label = sentiment[0]["label"]
+            score = round(sentiment[0]["score"], 3)
+        except Exception:
+            huggingface_available = False
 
-# 📝 Capture user input
-user_input = st.text_input("💬 Enter text for NLP analysis:")
+        if huggingface_available:
+            st.markdown("### 🤖 Hugging Face Sentiment")
+            st.write({"Label": label, "Confidence Score": score})
+        else:
+            st.warning("⚠️ Hugging Face failed. Using VADER fallback.")
+            sentiment_scores = vader.polarity_scores(user_input)
+            compound = sentiment_scores["compound"]
+            label = (
+                "POSITIVE" if compound > 0.05 else
+                "NEUTRAL" if -0.05 <= compound <= 0.05 else
+                "NEGATIVE"
+            )
+            score = round(compound, 3)
+            st.markdown("### 🛟 VADER Sentiment Fallback")
+            st.write({"Label": label, "Compound Score": score})
 
-if user_input.strip():
-    try:
-        # 🤖 Load Hugging Face Pipeline (once)
-        hf_pipeline = pipeline("sentiment-analysis")
-        sentiment = hf_pipeline(user_input)
-
-        label = sentiment[0]["label"]
-        score = round(sentiment[0]["score"], 3)
-
-        st.markdown("### 🤖 Hugging Face Sentiment")
-        st.write({"Label": label, "Confidence Score": score})
-
-        # 🎛️ Toggle: Emoji vs Plain Text
-        display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
-        emoji_label = (
-            "😊 Positive" if label == "POSITIVE" else
-            "😞 Negative" if label == "NEGATIVE" else
-            "😐 Neutral"
-        )
-        plain_label = label.capitalize()
-        final_label = emoji_label if display_mode == "😊 Emoji View" else plain_label
+        # 🎛️ Emoji Toggle
+        display_mode = st.radio("🎛️ Display Mode", ["😊 Emoji View", "🔤 Plain Text View"])
+        emoji_map = {
+            "POSITIVE": "😊 Positive",
+            "NEGATIVE": "😞 Negative",
+            "NEUTRAL": "😐 Neutral"
+        }
+        final_label = emoji_map.get(label, "❓ Unknown") if display_mode == "😊 Emoji View" else label.capitalize()
         st.markdown(f"**Sentiment:** {final_label} ({score})")
 
-    except Exception as e:
-        # ⚠️ Hugging Face Failed — Fallback to VADER
-        st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+# 🧬 NLP Pipeline Mode
+elif mode == "🧬 NLP Pipeline Demo":
+    st.markdown("## 🧬 NLP Pipeline Explorer")
+    user_input = st.text_area("💬 Enter text for NLP processing", key="nlp_input")
 
-        import nltk
-        from nltk.sentiment.vader import SentimentIntensityAnalyzer
-        nltk.download("vader_lexicon", quiet=True)
+    if user_input.strip():
+        try:
+            nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+        except OSError:
+            st.error("⚠️ spaCy model not found. Please bundle it correctly.")
+            st.stop()
 
-        vader = SentimentIntensityAnalyzer()
-        sentiment_scores = vader.polarity_scores(user_input)
+        # 📈 Sentiment Block
+        try:
+            sentiment = hf_pipeline(user_input)
+            label = sentiment[0]["label"]
+            score = round(sentiment[0]["score"], 3)
+        except Exception:
+            huggingface_available = False
 
-        st.markdown("### 🛟 VADER Sentiment Fallback")
-        st.write(sentiment_scores)
-
-        # 🎛️ Toggle: Emoji vs Plain Text
-        display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
-        compound = sentiment_scores["compound"]
-        emoji_label = (
-            "😊 Positive" if compound > 0.05 else
-            "😐 Neutral" if -0.05 <= compound <= 0.05 else
-            "😞 Negative"
-        )
-        plain_label = (
-            "Positive" if compound > 0.05 else
-            "Neutral" if -0.05 <= compound <= 0.05 else
-            "Negative"
-        )
-        final_label = emoji_label if display_mode == "😊 Emoji View" else plain_label
-        st.markdown(f"**Sentiment:** {final_label} ({compound})")
-
-    # ✅ Continue with NLP Breakdown
-    try:
-        nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
-    except OSError:
-        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
-        st.stop()
-
-    doc = nlp(user_input)
-
-    # 🧠 Entity Emoji Map
-    ENTITY_EMOJI_MAP = {
-        "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅",
-        "TIME": "⏰", "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦",
-        "LANGUAGE": "🗣️", "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
-    }
-
-    # 🔍 NLP Breakdown Expander
-    with st.expander("🔍 View Full NLP Breakdown"):
-        st.markdown("**🔤 Tokens:**")
-        st.write([f"🔹 {token.text}" for token in doc])
-
-        st.markdown("**🧾 Lemmas:**")
-        st.write([f"📄 {token.lemma_}" for token in doc])
-
-        st.markdown("**📊 POS Tags:**")
-        st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
-
-        st.markdown("**🏷️ Named Entities:**")
-        view_mode = st.radio("🔄 Choose entity view mode", ["🧾 Raw", "🏷️ Emoji-Mapped"])
-        if doc.ents:
-            if view_mode == "🧾 Raw":
-                st.write([(ent.text, ent.label_) for ent in doc.ents])
-            else:
-                styled_ents = [
-                    f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
-                    for ent in doc.ents
-                ]
-                st.write(styled_ents)
+        if huggingface_available:
+            st.markdown("### 🤖 Hugging Face Sentiment")
+            st.write({"Label": label, "Confidence Score": score})
         else:
-            st.info("ℹ️ No named entities found in the input.")
+            st.warning("⚠️ Hugging Face failed. Using VADER fallback.")
+            sentiment_scores = vader.polarity_scores(user_input)
+            compound = sentiment_scores["compound"]
+            label = (
+                "POSITIVE" if compound > 0.05 else
+                "NEUTRAL" if -0.05 <= compound <= 0.05 else
+                "NEGATIVE"
+            )
+            score = round(compound, 3)
+            st.markdown("### 🛟 VADER Sentiment Fallback")
+            st.write({"Label": label, "Compound Score": score})
 
-        # 🌥️ Wordcloud of Tokens
-        token_text = " ".join([token.text for token in doc])
-        wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
-        fig, ax = plt.subplots()
-        ax.imshow(wc, interpolation="bilinear")
-        ax.axis("off")
-        st.pyplot(fig)
+        display_mode = st.radio("🎛️ Display Mode", ["😊 Emoji View", "🔤 Plain Text View"])
+        emoji_map = {
+            "POSITIVE": "😊 Positive",
+            "NEGATIVE": "😞 Negative",
+            "NEUTRAL": "😐 Neutral"
+        }
+        final_label = emoji_map.get(label, "❓ Unknown") if display_mode == "😊 Emoji View" else label.capitalize()
+        st.markdown(f"**Sentiment:** {final_label} ({score})")
 
-        # ☁️ Wordcloud of Lemmas
-        lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
-        lemma_text = " ".join(lemmas)
-        wc_lemma = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
-        fig_wc, ax_wc = plt.subplots()
-        ax_wc.imshow(wc_lemma, interpolation="bilinear")
-        ax_wc.axis("off")
-        st.pyplot(fig_wc)
+        # 🔍 NLP Breakdown
+        doc = nlp(user_input)
+        ENTITY_EMOJI_MAP = {
+            "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅",
+            "TIME": "⏰", "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦",
+            "LANGUAGE": "🗣️", "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
+        }
 
-        # 📊 POS Tag Distribution
-        pos_counts = {}
-        for token in doc:
-            pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
-        pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
-        fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
-        st.plotly_chart(fig_pos)
+        with st.expander("🔍 View Full NLP Breakdown"):
+            st.markdown("**🔤 Tokens:**")
+            st.write([f"🔹 {token.text}" for token in doc])
 
-else:
-    st.info("ℹ️ Please enter some text above to run sentiment and NLP analysis.")
+            st.markdown("**🧾 Lemmas:**")
+            st.write([f"📄 {token.lemma_}" for token in doc])
+
+            st.markdown("**📊 POS Tags:**")
+            st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
+
+            st.markdown("**🏷️ Named Entities:**")
+            view_mode = st.radio("🔄 Entity View", ["🧾 Raw", "🏷️ Emoji-Mapped"])
+            if doc.ents:
+                if view_mode == "🧾 Raw":
+                    st.write([(ent.text, ent.label_) for ent in doc.ents])
+                else:
+                    styled_ents = [
+                        f"{ENTITY_EMOJI_MAP.get(ent.label_, '❓')} {ent.text} ({ent.label_})"
+                        for ent in doc.ents
+                    ]
+                    st.write(styled_ents)
+            else:
+                st.info("ℹ️ No named entities found.")
+
+            # 🌥️ Wordclouds
+            token_text = " ".join([token.text for token in doc])
+            wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
+            fig, ax = plt.subplots()
+            ax.imshow(wc, interpolation="bilinear")
+            ax.axis("off")
+            st.pyplot(fig)
+
+            lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
+            lemma_text = " ".join(lemmas)
+            wc_lemma = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
+            fig_wc, ax_wc = plt.subplots()
+            ax_wc.imshow(wc_lemma, interpolation="bilinear")
+            ax_wc.axis("off")
+            st.pyplot(fig_wc)
+
+            # 📊 POS Distribution
+            pos_counts = {}
+            for token in doc:
+                pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
+            pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
+            fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
+            st.plotly_chart(fig_pos)
+
+    else:
+        st.info("ℹ️ Please enter text to run the NLP pipeline.")
 
 
 # 📘 Sidebar Branding
