@@ -61,111 +61,83 @@ if mode == "NLP Pipeline Demo":
     # ✅ Run NLP only if input is provided
 import streamlit as st
 
+# 📈 Sentiment Analysis Section
+st.markdown("## 💬 Sentiment Analysis")
+
 # 📝 Capture user input
 user_input = st.text_input("💬 Enter text for NLP analysis:")
 
-if user_input:
-    # 🧠 Sentiment Analysis Block
- st.markdown("## 📈 Sentiment Analysis")
+if user_input.strip():
+    try:
+        # 🤖 Load Hugging Face Pipeline (once)
+        hf_pipeline = pipeline("sentiment-analysis")
+        sentiment = hf_pipeline(user_input)
 
-try:
-    # 🤖 Hugging Face Pipeline
-    from transformers import pipeline
-    hf_pipeline = pipeline("sentiment-analysis")
-    sentiment = hf_pipeline(user_input)
+        label = sentiment[0]["label"]
+        score = round(sentiment[0]["score"], 3)
 
-    # 🧾 Display Hugging Face Result
-    st.markdown("### 🤖 Hugging Face Sentiment")
-    st.write(sentiment)
+        st.markdown("### 🤖 Hugging Face Sentiment")
+        st.write({"Label": label, "Confidence Score": score})
 
-except Exception as e:
-    # ⚠️ Fallback to VADER
-    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+        # 🎛️ Toggle: Emoji vs Plain Text
+        display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
+        emoji_label = (
+            "😊 Positive" if label == "POSITIVE" else
+            "😞 Negative" if label == "NEGATIVE" else
+            "😐 Neutral"
+        )
+        plain_label = label.capitalize()
+        final_label = emoji_label if display_mode == "😊 Emoji View" else plain_label
+        st.markdown(f"**Sentiment:** {final_label} ({score})")
 
-    import nltk
-    from nltk.sentiment.vader import SentimentIntensityAnalyzer
-    nltk.download("vader_lexicon", quiet=True)
+    except Exception as e:
+        # ⚠️ Hugging Face Failed — Fallback to VADER
+        st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
 
-    vader = SentimentIntensityAnalyzer()
-    sentiment_scores = vader.polarity_scores(user_input)
+        import nltk
+        from nltk.sentiment.vader import SentimentIntensityAnalyzer
+        nltk.download("vader_lexicon", quiet=True)
 
- # 🛟 Display VADER Result
-st.markdown("### 🛟 VADER Sentiment Fallback")
-st.write(sentiment_scores)
+        vader = SentimentIntensityAnalyzer()
+        sentiment_scores = vader.polarity_scores(user_input)
 
-    # Hugging Face output block here...
-try:
-    sentiment = hf_pipeline(user_input)
-except Exception as e:
-    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+        st.markdown("### 🛟 VADER Sentiment Fallback")
+        st.write(sentiment_scores)
 
-    import nltk
-    from nltk.sentiment.vader import SentimentIntensityAnalyzer
-    nltk.download("vader_lexicon", quiet=True)
-
-    vader = SentimentIntensityAnalyzer()
-    sentiment_scores = vader.polarity_scores(user_input)
-
-    # ✅ Safe to use sentiment_scores here
-    st.markdown("### 🛟 VADER Sentiment Fallback")
-    st.write(sentiment_scores)
-
-    # 🎛️ Toggle block and emoji mapping here...
-
-
-# 🎛️ Toggle: Emoji vs Plain Text
-display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
-
-# 🧠 Sentiment Label Mapping
-def get_vader_label(compound_score):
-    if display_mode == "😊 Emoji View":
-        return (
-            "😊 Positive" if compound_score > 0.05 else
-            "😐 Neutral" if -0.05 <= compound_score <= 0.05 else
+        # 🎛️ Toggle: Emoji vs Plain Text
+        display_mode = st.radio("🎛️ Choose sentiment display mode", ["😊 Emoji View", "🔤 Plain Text View"])
+        compound = sentiment_scores["compound"]
+        emoji_label = (
+            "😊 Positive" if compound > 0.05 else
+            "😐 Neutral" if -0.05 <= compound <= 0.05 else
             "😞 Negative"
         )
-    else:
-        return (
-            "Positive" if compound_score > 0.05 else
-            "Neutral" if -0.05 <= compound_score <= 0.05 else
+        plain_label = (
+            "Positive" if compound > 0.05 else
+            "Neutral" if -0.05 <= compound <= 0.05 else
             "Negative"
         )
+        final_label = emoji_label if display_mode == "😊 Emoji View" else plain_label
+        st.markdown(f"**Sentiment:** {final_label} ({compound})")
 
-# 🧾 Display VADER Sentiment Label
-compound = sentiment_scores["compound"]
-label = get_vader_label(compound)
-st.markdown(f"**Sentiment:** {label}")
+    # ✅ Continue with NLP Breakdown
+    try:
+        nlp = spacy.load("./en_core_web_sm/en_core_web_sm-3.8.0")
+    except OSError:
+        st.error("⚠️ spaCy model not found. Please ensure it's bundled correctly.")
+        st.stop()
 
-# 🔄 Continue with NLP breakdown
-doc = nlp(user_input)
-ENTITY_EMOJI_MAP = {
-    "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅",
-    "TIME": "⏰", "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦",
-    "LANGUAGE": "🗣️", "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
-}
-doc = nlp(user_input)
+    doc = nlp(user_input)
 
-    # 🧠 Emoji Mapping for Entity Types
-ENTITY_EMOJI_MAP = {
-        "PERSON": "🧑",
-        "ORG": "🏢",
-        "GPE": "🌍",
-        "LOC": "📍",
-        "DATE": "📅",
-        "TIME": "⏰",
-        "MONEY": "💰",
-        "QUANTITY": "🔢",
-        "EVENT": "🎉",
-        "PRODUCT": "📦",
-        "LANGUAGE": "🗣️",
-        "NORP": "👥",
-        "FAC": "🏗️",
-        "LAW": "⚖️",
-        "WORK_OF_ART": "🎨"
+    # 🧠 Entity Emoji Map
+    ENTITY_EMOJI_MAP = {
+        "PERSON": "🧑", "ORG": "🏢", "GPE": "🌍", "LOC": "📍", "DATE": "📅",
+        "TIME": "⏰", "MONEY": "💰", "QUANTITY": "🔢", "EVENT": "🎉", "PRODUCT": "📦",
+        "LANGUAGE": "🗣️", "NORP": "👥", "FAC": "🏗️", "LAW": "⚖️", "WORK_OF_ART": "🎨"
     }
 
-    # 🔍 NLP Breakdown in Expander
-with st.expander("🔍 View Full NLP Breakdown"):
+    # 🔍 NLP Breakdown Expander
+    with st.expander("🔍 View Full NLP Breakdown"):
         st.markdown("**🔤 Tokens:**")
         st.write([f"🔹 {token.text}" for token in doc])
 
@@ -175,10 +147,8 @@ with st.expander("🔍 View Full NLP Breakdown"):
         st.markdown("**📊 POS Tags:**")
         st.write([f"📌 {token.text} → {token.pos_}" for token in doc])
 
-        # 🔄 Toggle for Entity View
         st.markdown("**🏷️ Named Entities:**")
         view_mode = st.radio("🔄 Choose entity view mode", ["🧾 Raw", "🏷️ Emoji-Mapped"])
-
         if doc.ents:
             if view_mode == "🧾 Raw":
                 st.write([(ent.text, ent.label_) for ent in doc.ents])
@@ -192,42 +162,33 @@ with st.expander("🔍 View Full NLP Breakdown"):
             st.info("ℹ️ No named entities found in the input.")
 
         # 🌥️ Wordcloud of Tokens
-        st.markdown("**🌥️ Wordcloud of Tokens:**")
-        from wordcloud import WordCloud
-        import matplotlib.pyplot as plt
-
         token_text = " ".join([token.text for token in doc])
         wc = WordCloud(width=800, height=400, background_color="white").generate(token_text)
-
         fig, ax = plt.subplots()
         ax.imshow(wc, interpolation="bilinear")
         ax.axis("off")
         st.pyplot(fig)
 
         # ☁️ Wordcloud of Lemmas
-        st.markdown("**☁️ Wordcloud of Lemmas:**")
         lemmas = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
         lemma_text = " ".join(lemmas)
-
         wc_lemma = WordCloud(width=600, height=300, background_color="white").generate(lemma_text)
         fig_wc, ax_wc = plt.subplots()
         ax_wc.imshow(wc_lemma, interpolation="bilinear")
         ax_wc.axis("off")
         st.pyplot(fig_wc)
 
-        # 📊 POS Tag Distribution Chart
-        import pandas as pd
-        import plotly.express as px
-
+        # 📊 POS Tag Distribution
         pos_counts = {}
         for token in doc:
             pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
-
         pos_df = pd.DataFrame(list(pos_counts.items()), columns=["POS", "Count"])
         fig_pos = px.bar(pos_df, x="POS", y="Count", title="📊 POS Tag Distribution", color="POS")
         st.plotly_chart(fig_pos)
 
-st.stop()
+else:
+    st.info("ℹ️ Please enter some text above to run sentiment and NLP analysis.")
+
 
 # 📘 Sidebar Branding
 with st.sidebar:
