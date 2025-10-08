@@ -67,7 +67,7 @@ user_input = st.text_input("💬 Enter text for NLP analysis:")
 if user_input:
     # 🧠 Sentiment Analysis Block
  # 📈 Sentiment Analysis Section
-st.markdown("## 💬 Sentiment Analysis")
+ st.markdown("## 💬 Sentiment Analysis")
 
 # 🧠 Load Hugging Face Pipeline
 from transformers import pipeline
