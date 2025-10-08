@@ -65,6 +65,42 @@ import streamlit as st
 user_input = st.text_input("💬 Enter text for NLP analysis:")
 
 if user_input:
+    # 🧠 Sentiment Analysis Block
+st.markdown("## 📈 Sentiment Analysis")
+
+try:
+    # 🤖 Hugging Face Pipeline
+    from transformers import pipeline
+    hf_pipeline = pipeline("sentiment-analysis")
+    sentiment = hf_pipeline(user_input)
+
+    # 🧾 Display Hugging Face Result
+    st.markdown("### 🤖 Hugging Face Sentiment")
+    st.write(sentiment)
+
+except Exception as e:
+    # ⚠️ Fallback to VADER
+    st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
+
+    import nltk
+    from nltk.sentiment.vader import SentimentIntensityAnalyzer
+    nltk.download("vader_lexicon", quiet=True)
+
+    vader = SentimentIntensityAnalyzer()
+    sentiment_scores = vader.polarity_scores(user_input)
+
+    # 🛟 Display VADER Result
+    st.markdown("### 🛟 VADER Sentiment Fallback")
+    st.write(sentiment_scores)
+
+    # 🧠 Emoji-Mapped Sentiment Label
+    compound = sentiment_scores["compound"]
+    label = (
+        "😊 Positive" if compound > 0.05 else
+        "😐 Neutral" if -0.05 <= compound <= 0.05 else
+        "😞 Negative"
+    )
+    st.markdown(f"**Sentiment:** {label}")
     doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
