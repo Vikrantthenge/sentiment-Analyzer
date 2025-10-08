@@ -1,4 +1,4 @@
-# 📦 Imports
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -17,15 +17,31 @@ nltk.download("vader_lexicon", quiet=True)
 st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
 
 # 🖼️ Logo + Animated Header
+# 🖼️ Logo + Animated Header with ✈️ Flight
 st.markdown("""
 <style>
 @keyframes typing { from { width: 0 } to { width: 100% } }
 @keyframes blink { 50% { border-color: transparent } }
+@keyframes fly {
+  0%   { transform: translateX(-100px); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
 .typing-header {
   font-size: 32px; font-weight: bold; white-space: nowrap;
   overflow: hidden; border-right: 3px solid #0078D4;
   width: 0; animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
   color: #0078D4; margin-bottom: 20px;
+}
+
+.flight-icon {
+  position: relative;
+  display: inline-block;
+  animation: fly 4s linear infinite;
+  font-size: 28px;
+  top: -10px;
+  left: 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -34,7 +50,9 @@ col1, col2 = st.columns([1, 5])
 with col1:
     st.image("logo.png", width=100)
 with col2:
+    st.markdown("<div class='flight-icon'>✈️</div>", unsafe_allow_html=True)
     st.markdown("<div class='typing-header'>Airline Sentiment Analyzer by Vikrant</div>", unsafe_allow_html=True)
+
 
 # 🔀 Mode Selection
 mode = st.radio("Choose Mode", ["⚡ Basic Sentiment", "🧬 NLP Pipeline Demo"])
