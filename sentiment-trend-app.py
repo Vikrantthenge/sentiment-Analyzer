@@ -65,74 +65,7 @@ import streamlit as st
 user_input = st.text_input("💬 Enter text for NLP analysis:")
 
 if user_input:
-    # 🧠 Sentiment Analysis Block
- # 📈 Sentiment Analysis Section
- st.markdown("## 💬 Sentiment Analysis")
-
-# 🧠 Load Hugging Face Pipeline
-from transformers import pipeline
-hf_pipeline = pipeline("sentiment-analysis")
-
-# ✅ Check for user input
-user_input = st.text_input("💬 Enter text for sentiment analysis:")
-
-if user_input.strip():
-    try:
-        # 🤖 Hugging Face Sentiment
-        sentiment = hf_pipeline(user_input)
-        label = sentiment[0]["label"]
-        score = round(sentiment[0]["score"], 3)
-
-        # 🧾 Display Hugging Face Result
-        st.markdown("### 🤖 Hugging Face Sentiment")
-        st.write({
-            "Label": label,
-            "Confidence Score": score
-        })
-
-        # 🧠 Emoji-Mapped Sentiment Label
-        emoji_label = (
-            "😊 Positive" if label == "POSITIVE" else
-            "😞 Negative" if label == "NEGATIVE" else
-            "😐 Neutral"
-        )
-        st.markdown(f"**Sentiment:** {emoji_label}")
-
-    except Exception as e:
-        # ⚠️ Hugging Face Failed — Fallback to VADER
-        st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
-
-        import nltk
-        from nltk.sentiment.vader import SentimentIntensityAnalyzer
-        nltk.download("vader_lexicon", quiet=True)
-
-        vader = SentimentIntensityAnalyzer()
-        sentiment_scores = vader.polarity_scores(user_input)
-
-        # 🛟 Display VADER Result
-        st.markdown("### 🛟 VADER Sentiment Fallback")
-        st.write(sentiment_scores)
-
-        # 🧠 Emoji-Mapped Sentiment Label
-        compound = sentiment_scores["compound"]
-        emoji_label = (
-            "😊 Positive" if compound > 0.05 else
-            "😐 Neutral" if -0.05 <= compound <= 0.05 else
-            "😞 Negative"
-        )
-        st.markdown(f"**Sentiment:** {emoji_label}")
-else:
-    st.info("ℹ️ Please enter some text above to run sentiment analysis.")
-
-
-    # 🧠 Emoji-Mapped Sentiment Label
-    compound = sentiment_scores["compound"]
-    label = (
-        "😊 Positive" if compound > 0.05 else
-        "😐 Neutral" if -0.05 <= compound <= 0.05 else
-        "😞 Negative"
-    )
-    st.markdown(f"**Sentiment:** {label}")
+    
     doc = nlp(user_input)
 
     # 🧠 Emoji Mapping for Entity Types
