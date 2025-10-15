@@ -7,6 +7,8 @@
 
 [![Sentiment Analyzer](https://img.shields.io/badge/Sentiment%20Analyzer--orange?logo=huggingface)](https://huggingface.co/spaces/vthenge/sentiment-analyzer)
 
+[![Sentiment Analyzer](https://img.shields.io/badge/Sentiment%20Analyzer--red?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)  
 [![CI Status](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml/badge.svg)](https://github.com/Vikrantthenge/sentiment-Analyzer/actions/workflows/sentiment.ci.yml)
