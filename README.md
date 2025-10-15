@@ -14,7 +14,12 @@
 ### 🚀 Launch & Capabilities
 
 <p align="center">
-  <a href="https://sentiment-analyzer-vikrant.streamlit.app"><img src="https://img.shields.io/badge/Live%20App-Launch-green?style=for-the-badge&logo=streamlit"></a>
+  <a href="https://sentiment-analyzer-vikrant.streamlit.app">
+    <img src="https://img.shields.io/badge/Streamlit%20App-Live-green?style=for-the-badge&logo=streamlit">
+  </a>
+  <a href="https://huggingface.co/spaces/vthenge/sentiment-analyzer">
+    <img src="https://img.shields.io/badge/Hugging%20Face-Live-orange?style=for-the-badge&logo=huggingface">
+  </a>
   <img src="https://img.shields.io/badge/NLP%20Pipeline-Enabled-blue?style=for-the-badge&logo=spacy">
   <img src="https://img.shields.io/badge/Visual%20Insights-WordCloud%20%26%20POS-orange?style=for-the-badge&logo=plotly">
 </p>
