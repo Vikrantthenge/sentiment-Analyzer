@@ -5,9 +5,6 @@
 [![Recruiter](https://img.shields.io/badge/Recruiter-Facing-0078D4?logo=target)](https://www.linkedin.com/in/vthenge)  
 [![CX](https://img.shields.io/badge/CX-Intelligence-00C853?logo=insights)](https://sentiment-analyzer-vikrant.streamlit.app)
 
-[![Sentiment Analyzer](https://img.shields.io/badge/Sentiment%20Analyzer--orange?logo=huggingface)](https://huggingface.co/spaces/vthenge/sentiment-analyzer)
-
-[![Sentiment Analyzer](https://img.shields.io/badge/Sentiment%20Analyzer--red?logo=streamlit)](https://sentiment-analyzer-vikrant.streamlit.app)
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
 [![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)  
