@@ -121,7 +121,15 @@ Every push to `main` triggers automated validation and deployment, ensuring clea
 
 ### 🔗 Launch Demo
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://sentiment-analyzer-vikrant.streamlit.app)
+<p align="center">
+  <a href="https://sentiment-analyzer-vikrant.streamlit.app">
+    <img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Open in Streamlit">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://huggingface.co/spaces/vthenge/sentiment-analyzer">
+    <img src="https://img.shields.io/badge/Open%20in-Hugging%20Face-orange?logo=huggingface&style=flat-square" alt="Open in Hugging Face">
+  </a>
+</p>
 
 📦 Powered by `spaCy`, `Streamlit`, `WordCloud`, `Plotly`  
 🧠 Branded by VT | Built for recruiter clarity
