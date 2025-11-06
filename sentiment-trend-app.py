@@ -475,35 +475,6 @@ if neg_count > 10:
 else:
     st.success("✅ No major negative sentiment spike detected.")
 
-# 📌 Footer Branding
-st.markdown("---")
-st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
-st.markdown("""
-### 🔗 Connect with Me  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
-[![Email](https://img.shields.io/badge/Email-vikrantthenge@outlook.com-red?logo=gmail)](mailto:vikrantthenge@outlook.com)  
-[![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div style='text-align: center; font-size:16px; font-weight:normal; color:#343a40; line-height:1.2;'>
-🔍 Powered by NLP & CX Intelligence — Built for Airline Feedback Precision.<br>
-🔐 This dashboard analyzes anonymized feedback only. No personal data is stored.
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div style='text-align: center; font-size: 16px; font-weight: bold; color: #000000;'>
-🛠️ Version: v1.0 | 📅 Last Updated: October 2025
-</div>
-""", unsafe_allow_html=True)
-
-
-
-                                 
-
-
-
 # ===========================================================
 # 💠 QUALTRICS COMPATIBILITY SECTION
 # ===========================================================
@@ -533,6 +504,38 @@ if uploaded_file is not None:
     df = load_qualtrics_csv(uploaded_file)
     if df is not None:
         st.success("✅ File uploaded successfully (Qualtrics-compatible).")
+        # 🧭 Quick Preview for Qualtrics Data
+if df is not None:
+    st.markdown("### 📊 Qualtrics Data Preview")
+    preview_cols = df.columns[:6] if len(df.columns) > 6 else df.columns
+    st.dataframe(df[preview_cols].head(10))
+
+    # If Qualtrics metadata columns detected, visualize response completeness
+    qualtrics_cols = [c for c in df.columns if any(x in c.lower() for x in ["responseid", "duration", "progress", "finished"])]
+    if qualtrics_cols:
+        st.markdown("### ⏱️ Survey Metadata Summary")
+        meta_summary = df[qualtrics_cols].describe(include='all').T
+        st.dataframe(meta_summary)
+
+    # Simple visualization for Qualtrics satisfaction or text responses
+    text_cols = [c for c in df.columns if any(x in c.lower() for x in ["text", "comment", "feedback", "open"])]
+    rating_cols = [c for c in df.columns if any(x in c.lower() for x in ["satisfaction", "rating", "score"])]
+
+    if rating_cols:
+        st.markdown("### ⭐ Average Satisfaction (from Qualtrics Ratings)")
+        avg_scores = df[rating_cols].mean(numeric_only=True)
+        fig = px.bar(
+            x=avg_scores.index, y=avg_scores.values,
+            title="Average Survey Ratings (Qualtrics Export)",
+            labels={"x": "Question", "y": "Average Score"},
+            color=avg_scores.values
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif text_cols:
+        st.markdown("### 💬 Sample Open-Ended Responses")
+        st.write(df[text_cols[0]].dropna().head(5))
+
     else:
         st.stop()
 else:
@@ -549,3 +552,31 @@ with st.sidebar:
     st.markdown("This app can process **Qualtrics survey exports** directly (auto-detects and cleans headers).")
 
 # ===========================================================
+
+# 📌 Footer Branding
+st.markdown("---")
+st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
+st.markdown("""
+### 🔗 Connect with Me  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
+[![Email](https://img.shields.io/badge/Email-vikrantthenge@outlook.com-red?logo=gmail)](mailto:vikrantthenge@outlook.com)  
+[![GitHub](https://img.shields.io/badge/GitHub-vikrantthenge-black?logo=github)](https://github.com/vikrantthenge)
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='text-align: center; font-size:16px; font-weight:normal; color:#343a40; line-height:1.2;'>
+🔍 Powered by NLP & CX Intelligence — Built for Airline Feedback Precision.<br>
+🔐 This dashboard analyzes anonymized feedback only. No personal data is stored.
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='text-align: center; font-size: 16px; font-weight: bold; color: #000000;'>
+🛠️ Version: v1.0 | 📅 Last Updated: October 2025
+</div>
+""", unsafe_allow_html=True)
+
+
+
+                            
+
