@@ -10,7 +10,6 @@ import nltk
 import random
 import re
 
-
 # nltk.download("vader_lexicon", quiet=True) for streamlit
 
 import nltk
@@ -92,7 +91,6 @@ with col2:
       <div class="typing-header">Airline Sentiment Analyzer by Vikrant</div>
     </div>
     """, unsafe_allow_html=True)
-
 
 # 🔀 Mode Selection
 mode = st.radio("Choose Mode", ["⚡ Basic Sentiment", "🧬 NLP Pipeline Demo"])
@@ -249,7 +247,6 @@ elif mode == "🧬 NLP Pipeline Demo":
 
     else:
         st.info("ℹ️ Please enter text to run the NLP pipeline.")
-
 
 # 📘 Sidebar Branding
 with st.sidebar:
@@ -499,10 +496,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
-
-
-
 # ===========================================================
 # 💠 QUALTRICS COMPATIBILITY SECTION
 # ===========================================================
@@ -523,18 +516,6 @@ def load_qualtrics_csv(file):
     except Exception as e:
         st.error(f"❌ Could not read Qualtrics CSV: {e}")
         return None
-    
-# 🔄 Simulated Qualtrics Pull Toggle
-st.markdown("### 🔄 Simulated Qualtrics Pull")
-
-simulate_pull = st.toggle("Simulate Real-Time Qualtrics Pull")
-if simulate_pull:
-    st.info("🔄 Simulating Qualtrics API pull... (demo data refreshed)")
-    # Example: Add random NPS responses or timestamps to mimic API feed
-    df["Timestamp"] = pd.date_range(end=pd.Timestamp.now(), periods=len(df))
-    df["NPS"] = [random.randint(0, 10) for _ in range(len(df))]
-    st.success("✅ Simulated pull complete with timestamps and NPS field added.")
-
 
 # Replace standard upload handling
 DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
@@ -561,3 +542,5 @@ with st.sidebar:
 
 # ===========================================================
 
+
+ 
