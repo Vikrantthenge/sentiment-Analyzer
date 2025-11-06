@@ -7,4 +7,5 @@ matplotlib
 wordcloud
 vaderSentiment
 spacy
+fpdf2
 nltk
