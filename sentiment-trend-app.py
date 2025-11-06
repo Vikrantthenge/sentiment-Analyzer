@@ -22,62 +22,6 @@ nltk.download("vader_lexicon", download_dir="./nltk_data", quiet=True)
 # Tell NLTK to look in the local directory
 nltk.data.path.append("./nltk_data")
 
-
-# ------------------ Dual-mode Sentiment Engine (Hugging Face + VADER) ------------------
-import os
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
-from pathlib import Path
-MODEL_NAME = "distilbert-base-uncased-finetuned-sst-2-english"
-LOCAL_MODEL_DIR = os.path.join(".", "models", "distilbert-sentiment")
-
-def prepare_hf_pipeline(local_dir=LOCAL_MODEL_DIR, model_name=MODEL_NAME):
-    """
-    Attempts to load a locally cached model first. If missing, tries to download and cache
-    the model into local_dir so future runs are offline-capable. Returns (pipeline_obj, mode_str).
-    """
-    Path(local_dir).mkdir(parents=True, exist_ok=True)
-    # Try loading from local folder first
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(local_dir, local_files_only=True)
-        model = AutoModelForSequenceClassification.from_pretrained(local_dir, local_files_only=True)
-        pipe = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
-        return pipe, "HuggingFace (local)"
-    except Exception:
-        pass
-    # Try downloading and saving into local_dir
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForSequenceClassification.from_pretrained(model_name)
-        # save to local dir for offline reuse
-        tokenizer.save_pretrained(local_dir)
-        model.save_pretrained(local_dir)
-        pipe = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
-        return pipe, "HuggingFace (downloaded)"
-    except Exception as e:
-        # Could not load HF model (no internet or missing dependencies)
-        return None, None
-
-# Initialize analyzer
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-analyzer = SentimentIntensityAnalyzer()
-
-# Prepare pipeline silently
-hf_pipeline_obj, hf_mode = prepare_hf_pipeline()
-
-if hf_pipeline_obj is not None:
-    sentiment_engine = "huggingface"
-    sentiment_pipeline = hf_pipeline_obj
-    hf_status = f"✅ Sentiment Analysis Active — Running in Hugging Face Mode ({hf_mode})"
-else:
-    sentiment_engine = "vader"
-    sentiment_pipeline = None
-    hf_status = "✅ Sentiment Analysis Active — Running in VADER Mode (Offline)"
-# Display the status cleanly in the sidebar (no warnings)
-with st.sidebar:
-    st.markdown("<small style='color:green;'>"+hf_status+"</small>", unsafe_allow_html=True)
-# --------------------------------------------------------------------------------------
-
-
 # Initialize the sentiment analyzer
 sia = SentimentIntensityAnalyzer()
 
@@ -156,7 +100,7 @@ mode = st.radio("Choose Mode", ["⚡ Basic Sentiment", "🧬 NLP Pipeline Demo"]
 # 🤖 Load Hugging Face Pipeline
 try:
     hf_pipeline = pipeline("sentiment-analysis")
-    huggingface_available = True  # placeholder
+    huggingface_available = True
 except Exception:
     huggingface_available = False
 
@@ -317,84 +261,22 @@ with st.sidebar:
     st.info("📌 Tip: Upload a CSV with a column like 'text', 'review', or 'comments' containing customer feedback.")
 
 # 📂 File Upload or Default
-# ===========================================================
-# 💠 QUALTRICS COMPATIBILITY SECTION (DEFAULT: bundled demo CSV)
-# ===========================================================
+st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
+DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
 
-st.markdown("### 💠 Qualtrics-Compatible Data Import (Demo bundled)")
-
-def load_qualtrics_csv(file):
-    try:
-        # If file is a Streamlit UploadedFile, it behaves like a file-like object
-        # We'll try to read normally first
-        df_try = pd.read_csv(file)
-        # Detect Qualtrics export pattern: often has a first header row like 'StartDate' etc.
-        cols0 = df_try.columns.tolist()
-        if len(cols0) > 0 and (str(cols0[0]).lower().startswith("startdate") or "responseid" in [c.lower() for c in cols0]):
-            # Rewind and re-read skipping the first two metadata rows (common in Qualtrics exports)
-            try:
-                file.seek(0)
-            except Exception:
-                pass
-            df = pd.read_csv(file, skiprows=[0,1])
-            st.info("💡 Detected Qualtrics survey format. Automatically cleaned headers.")
-            return df
-        return df_try
-    except Exception as e:
-        st.error(f"❌ Could not read Qualtrics CSV: {e}")
-        return None
-
-# Use bundled demo CSV as default so the app loads visuals immediately
-import os
-BUNDLED_QUALTRICS_CSV = "/mnt/data/qualtrics_airline_feedback.csv"
-
-uploaded_file = st.file_uploader("Upload airline-reviews.csv or Qualtrics export", type=["csv"])
+uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
 if uploaded_file is not None:
-    df = load_qualtrics_csv(uploaded_file)
-    if df is not None:
-        st.success("✅ File uploaded successfully (Qualtrics-compatible).")
-    else:
-        st.stop()
+    df = pd.read_csv(uploaded_file)
+    st.success("✅ Custom file uploaded successfully.")
 else:
     try:
-        df = pd.read_csv(BUNDLED_QUALTRICS_CSV, skiprows=[0,1])
-        st.info("ℹ️ Using bundled Qualtrics-style demo file (Qualtrics-Compatible Mode)")
+        df = pd.read_csv(DEFAULT_CSV_URL)
+        st.info("ℹ️ Using default demo file from GitHub")
     except Exception:
-        # Fallback to original remote demo if bundled file missing
-        try:
-            DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
-            df = pd.read_csv(DEFAULT_CSV_URL)
-            st.info("ℹ️ Using default demo file from GitHub")
-        except Exception:
-            st.error("❌ Default file not found. Please upload a CSV file.")
-            st.stop()
+        st.error("❌ Default file not found. Please upload a CSV file.")
+        st.stop()
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else os.path.basename(BUNDLED_QUALTRICS_CSV))
-
-# Quick visual confirmation for stakeholders/recruiters
-if df is not None:
-    st.markdown("### 📊 Qualtrics Demo Preview (Auto-loaded)")
-    preview_cols = df.columns[:6] if len(df.columns) > 6 else df.columns
-    st.dataframe(df[preview_cols].head(10))
-
-    qualtrics_cols = [c for c in df.columns if any(x in c.lower() for x in ['responseid','duration','progress','finished'])]
-    if qualtrics_cols:
-        st.markdown("### ⏱️ Survey Metadata Summary")
-        meta_summary = df[qualtrics_cols].describe(include='all').T
-        st.dataframe(meta_summary)
-
-    text_cols = [c for c in df.columns if any(x in c.lower() for x in ['text','comment','feedback','open'])]
-    rating_cols = [c for c in df.columns if any(x in c.lower() for x in ['satisfaction','rating','score'])]
-
-    if rating_cols:
-        st.markdown("### ⭐ Average Ratings (Demo)")
-        avg_scores = df[rating_cols].mean(numeric_only=True)
-        fig = px.bar(x=avg_scores.index, y=avg_scores.values, title="Average Survey Ratings (Qualtrics Demo)", labels={"x":"Question","y":"Average Score"}, color=avg_scores.values)
-        st.plotly_chart(fig, use_container_width=True)
-    elif text_cols:
-        st.markdown("### 💬 Sample Open-Ended Responses")
-        st.write(df[text_cols[0]].dropna().head(7))
-# ===========================================================
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -403,7 +285,7 @@ if "airline" not in df.columns:
 # 🧠 Sentiment Analysis
 try:
     sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-    huggingface_available = True  # placeholder
+    huggingface_available = True
 except Exception:
     st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
     huggingface_available = False
@@ -485,6 +367,22 @@ if "date" in df.columns:
             color_discrete_map={"POSITIVE": "blue", "NEGATIVE": "crimson", "NEUTRAL": "gray"}
         )
         st.plotly_chart(fig_trend, use_container_width=True)
+
+        # 🎯 NPS Scoring + Trendline
+if "NPS" in df.columns:
+    st.markdown("### 🎯 NPS Score Trend")
+    df["NPS_Category"] = df["NPS"].apply(lambda x: "Promoter" if x >= 9 else "Passive" if x >= 7 else "Detractor")
+    promoters = (df["NPS_Category"] == "Promoter").sum()
+    detractors = (df["NPS_Category"] == "Detractor").sum()
+    total_responses = len(df)
+    nps_score = ((promoters - detractors) / total_responses) * 100
+    st.metric("Net Promoter Score (NPS)", f"{nps_score:.1f}")
+
+    if "date" in df.columns:
+        nps_trend = df.groupby("date")["NPS"].mean().reset_index()
+        fig_nps = px.line(nps_trend, x="date", y="NPS", title="📈 Average NPS Over Time")
+        st.plotly_chart(fig_nps, use_container_width=True)
+
 
         # 📈 Rolling Average Sentiment Trend
         st.markdown("### 📈 Smoothed Sentiment Trend (7-Day Rolling Avg)")
@@ -585,6 +483,41 @@ if neg_text.strip():
 else:
     st.info("No negative sentiment found for this airline.")
 
+# 🧩 Theme Clustering using BERTopic
+st.markdown("### 🧩 Theme Clustering (BERTopic)")
+
+try:
+    from bertopic import BERTopic
+    from sklearn.feature_extraction.text import CountVectorizer
+
+    sample_texts = df[selected_text_col].dropna().astype(str).tolist()
+    if len(sample_texts) > 30:
+        st.info("🧠 Generating topics using BERTopic (may take a moment)...")
+        topic_model = BERTopic(verbose=False)
+        topics, _ = topic_model.fit_transform(sample_texts)
+        topic_freq = topic_model.get_topic_info()
+        st.dataframe(topic_freq.head(10))
+        fig_topics = topic_model.visualize_barchart(top_n_topics=5)
+        st.plotly_chart(fig_topics, use_container_width=True)
+    else:
+        st.warning("Not enough text data to run BERTopic clustering.")
+except Exception as e:
+    st.warning(f"⚠️ BERTopic unavailable or dependency issue: {e}")
+
+# 🧭 CX Journey Segmentation
+st.markdown("### 🧭 CX Journey Segmentation")
+
+if "date" in df.columns and "sentiment" in df.columns:
+    df["journey_phase"] = pd.cut(df["date"].rank(method="first"),
+                                 bins=3, labels=["Pre-Flight", "In-Flight", "Post-Flight"])
+    phase_sentiment = df.groupby(["journey_phase", "sentiment"]).size().reset_index(name="count")
+    fig_phase = px.bar(phase_sentiment, x="journey_phase", y="count", color="sentiment",
+                       title="CX Journey Sentiment Segmentation", barmode="group")
+    st.plotly_chart(fig_phase, use_container_width=True)
+else:
+    st.info("Add a 'date' column to enable CX journey segmentation.")
+
+
 # ⚠️ CX Alert Section
 st.markdown("### ⚠️ CX Alert")
 neg_count = sentiment_counts.get("NEGATIVE", 0)
@@ -592,6 +525,29 @@ if neg_count > 10:
     st.error(f"🚨 Spike in negative sentiment detected for {selected_airline}. Investigate recent feedback.")
 else:
     st.success("✅ No major negative sentiment spike detected.")
+
+# 📤 Export to PDF Summary Report
+st.markdown("### 📤 Export Summary Report")
+
+from fpdf import FPDF
+
+if st.button("Generate PDF Report"):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(200, 10, txt="Airline Sentiment Summary Report", ln=True, align="C")
+    pdf.set_font("Arial", size=12)
+    pdf.multi_cell(0, 10, txt=f"Selected Airline: {selected_airline}")
+    pdf.multi_cell(0, 10, txt=f"Total Records: {len(df)}")
+    if "NPS" in df.columns:
+        pdf.multi_cell(0, 10, txt=f"NPS Score: {nps_score:.1f}")
+    pdf.multi_cell(0, 10, txt="Top 5 Topics / Themes:")
+    if "topic_model" in locals():
+        top_topics = topic_model.get_topic_info().head(5).to_string(index=False)
+        pdf.multi_cell(0, 10, txt=top_topics)
+    pdf.output("CX_Summary_Report.pdf")
+    st.success("✅ PDF report generated successfully! Check your project folder.")
+
 
 # 📌 Footer Branding
 st.markdown("---")
@@ -612,13 +568,66 @@ st.markdown("""
 
 st.markdown("""
 <div style='text-align: center; font-size: 16px; font-weight: bold; color: #000000;'>
-🛠️ Version: v1.0 | 📅 Last Updated: November 2025
+🛠️ Version: v1.0 | 📅 Last Updated: October 2025
 </div>
 """, unsafe_allow_html=True)
 
 
 
-                                 
+# ===========================================================
+# 💠 QUALTRICS COMPATIBILITY SECTION
+# ===========================================================
+
+st.markdown("### 💠 Qualtrics-Compatible Data Import")
+
+def load_qualtrics_csv(file):
+    try:
+        # Try reading normally first
+        df = pd.read_csv(file)
+        # Detect Qualtrics format (metadata rows start with 'StartDate' in row 1)
+        if df.columns[0].startswith("StartDate") or "ResponseId" in df.columns:
+            # Re-read, skipping first two metadata rows (common in Qualtrics exports)
+            file.seek(0)
+            df = pd.read_csv(file, skiprows=[0, 1])
+            st.info("💡 Detected Qualtrics survey format. Automatically cleaned headers.")
+        return df
+    except Exception as e:
+        st.error(f"❌ Could not read Qualtrics CSV: {e}")
+        return None
+    
+# 🔄 Simulated Qualtrics Pull Toggle
+st.markdown("### 🔄 Simulated Qualtrics Pull")
+
+simulate_pull = st.toggle("Simulate Real-Time Qualtrics Pull")
+if simulate_pull:
+    st.info("🔄 Simulating Qualtrics API pull... (demo data refreshed)")
+    # Example: Add random NPS responses or timestamps to mimic API feed
+    df["Timestamp"] = pd.date_range(end=pd.Timestamp.now(), periods=len(df))
+    df["NPS"] = [random.randint(0, 10) for _ in range(len(df))]
+    st.success("✅ Simulated pull complete with timestamps and NPS field added.")
 
 
+# Replace standard upload handling
+DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
 
+uploaded_file = st.file_uploader("Upload airline-reviews.csv or Qualtrics export", type=["csv"])
+if uploaded_file is not None:
+    df = load_qualtrics_csv(uploaded_file)
+    if df is not None:
+        st.success("✅ File uploaded successfully (Qualtrics-compatible).")
+    else:
+        st.stop()
+else:
+    try:
+        df = pd.read_csv(DEFAULT_CSV_URL)
+        st.info("ℹ️ Using default demo file from GitHub")
+    except Exception:
+        st.error("❌ Default file not found. Please upload a CSV file.")
+        st.stop()
+
+# Add badge in sidebar
+with st.sidebar:
+    st.markdown("### 💠 Qualtrics-Compatible ✅")
+    st.markdown("This app can process **Qualtrics survey exports** directly (auto-detects and cleans headers).")
+
+# ===========================================================
