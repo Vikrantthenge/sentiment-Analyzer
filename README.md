@@ -70,7 +70,12 @@ Compatible with CSV uploads and Qualtrics survey exports, enabling recruiter and
 ![spaCy](https://img.shields.io/badge/spaCy-NLP-blue?logo=spacy)
 ![WordCloud](https://img.shields.io/badge/WordCloud-Visuals-lightgrey?logo=python)
 ![Pandas](https://img.shields.io/badge/Pandas-Wrangling-black?logo=pandas)
-![Qualtrics](https://img.shields.io/badge/Qualtrics-Survey%20Analytics-darkred?style=flat-square&logo=qualtrics&logoColor=white)
+![Qualtrics](https://img.shields.io/badge/Qualtrics-Surveys-darkred?style=flat-square&logo=qualtrics)
+![Google Forms](https://img.shields.io/badge/Google%20Forms-Feedback-purple?style=flat-square&logo=googleforms)
+![Typeform](https://img.shields.io/badge/Typeform-UX%20Surveys-black?style=flat-square&logo=typeform)
+
+## 🔹 Survey Compatibility  
+📊 Survey Tools: Qualtrics | Google Forms | Typeform
 
 ---
 
