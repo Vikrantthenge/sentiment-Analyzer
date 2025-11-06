@@ -11,7 +11,19 @@ import nltk
 import random
 import re
 
-nltk.download("vader_lexicon", quiet=True)
+# nltk.download("vader_lexicon", quiet=True) for streamlit
+
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# Redirect NLTK download to a writable local directory
+nltk.download("vader_lexicon", download_dir="./nltk_data", quiet=True)
+
+# Tell NLTK to look in the local directory
+nltk.data.path.append("./nltk_data")
+
+# Initialize the sentiment analyzer
+sia = SentimentIntensityAnalyzer()
 
 # 🌐 Page Config
 st.set_page_config(page_title="✈️ Airline Sentiment Analyzer", layout="centered")
@@ -491,3 +503,49 @@ st.markdown("""
                                  
 
 
+
+# ===========================================================
+# 💠 QUALTRICS COMPATIBILITY SECTION
+# ===========================================================
+
+st.markdown("### 💠 Qualtrics-Compatible Data Import")
+
+def load_qualtrics_csv(file):
+    try:
+        # Try reading normally first
+        df = pd.read_csv(file)
+        # Detect Qualtrics format (metadata rows start with 'StartDate' in row 1)
+        if df.columns[0].startswith("StartDate") or "ResponseId" in df.columns:
+            # Re-read, skipping first two metadata rows (common in Qualtrics exports)
+            file.seek(0)
+            df = pd.read_csv(file, skiprows=[0, 1])
+            st.info("💡 Detected Qualtrics survey format. Automatically cleaned headers.")
+        return df
+    except Exception as e:
+        st.error(f"❌ Could not read Qualtrics CSV: {e}")
+        return None
+
+# Replace standard upload handling
+DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
+
+uploaded_file = st.file_uploader("Upload airline-reviews.csv or Qualtrics export", type=["csv"])
+if uploaded_file is not None:
+    df = load_qualtrics_csv(uploaded_file)
+    if df is not None:
+        st.success("✅ File uploaded successfully (Qualtrics-compatible).")
+    else:
+        st.stop()
+else:
+    try:
+        df = pd.read_csv(DEFAULT_CSV_URL)
+        st.info("ℹ️ Using default demo file from GitHub")
+    except Exception:
+        st.error("❌ Default file not found. Please upload a CSV file.")
+        st.stop()
+
+# Add badge in sidebar
+with st.sidebar:
+    st.markdown("### 💠 Qualtrics-Compatible ✅")
+    st.markdown("This app can process **Qualtrics survey exports** directly (auto-detects and cleans headers).")
+
+# ===========================================================
