@@ -1,0 +1,113 @@
+StartDate,EndDate,RecordedDate,Progress,Duration (in seconds),Finished,ResponseId
+2025-11-06 06:46:41,Qualtrics Export,,,,,
+ResponseId,StartDate,EndDate,RecordedDate,Progress,Duration (in seconds),Finished,airline,Q1: Overall Satisfaction (1-5),Q2: On-time experience,Q3: Cabin crew experience,Q4: Please share your feedback,Q5: Would you recommend us?
+R_1000001,2025-09-17 09:58:41,2025-09-17 10:01:23,2025-09-17 10:01:23,84,162,True,Air India,3,Delayed,Excellent,Ground staff were rude during boarding. Crew were polite but slow to respond.,Maybe
+R_1000002,2025-10-15 16:28:41,2025-10-15 16:31:51,2025-10-15 16:31:51,62,190,True,Indigo,3,On time,Poor,"Clean cabin, friendly crew, on-time departure. Crew was attentive and friendly.",Yes
+R_1000003,2025-10-18 04:04:41,2025-10-18 04:45:54,2025-10-18 04:45:54,59,2473,True,Indigo,5,On time,Good,Pilot provided excellent updates and smooth landing. Crew seemed stressed and inattentive.,No
+R_1000004,2025-09-16 14:02:41,2025-09-16 14:10:00,2025-09-16 14:10:00,96,439,False,Indigo,4,On time,Poor,"Smooth flight, would travel again. Crew went above and beyond to help elderly passenger.",Maybe
+R_1000005,2025-09-18 15:27:41,2025-09-18 15:54:31,2025-09-18 15:54:31,62,1610,True,Akasa,3,Delayed,Excellent,Crew handled the medical emergency professionally. Crew went above and beyond to help elderly passenger.,Yes
+R_1000006,2025-09-28 00:37:41,2025-09-28 01:31:27,2025-09-28 01:31:27,90,3226,True,Indigo,5,Delayed,Average,Loved the in-flight entertainment. Crew seemed stressed and inattentive.,Yes
+R_1000007,2025-10-10 23:26:41,2025-10-10 23:51:56,2025-10-10 23:51:56,88,1515,True,AirAsia,3,Cancelled,Good,"Seats were comfortable, food was okay. Crew were polite but slow to respond.",Maybe
+R_1000008,2025-09-29 13:33:41,2025-09-29 13:45:50,2025-09-29 13:45:50,64,729,False,SpiceJet,3,Cancelled,Average,"Clean cabin, friendly crew, on-time departure. Crew were polite but slow to respond.",Yes
+R_1000009,2025-09-28 03:07:41,2025-09-28 04:04:47,2025-09-28 04:04:47,63,3426,True,Vistara,4,On time,Poor,Pilot provided excellent updates and smooth landing. Excellent service by cabin crew.,No
+R_1000010,2025-10-19 01:08:41,2025-10-19 01:19:26,2025-10-19 01:19:26,87,645,True,Air India,3,On time,Poor,Ground staff were rude during boarding. Crew went above and beyond to help elderly passenger.,Maybe
+R_1000011,2025-10-13 15:16:41,2025-10-13 15:42:23,2025-10-13 15:42:23,90,1542,True,Air India,4,On time,Good,"Clean cabin, friendly crew, on-time departure. Crew was attentive and friendly.",Maybe
+R_1000012,2025-10-15 16:59:41,2025-10-15 17:41:23,2025-10-15 17:41:23,50,2502,True,SpiceJet,4,Very delayed,Excellent,Crew were very helpful. Excellent service by cabin crew.,Maybe
+R_1000013,2025-10-26 03:47:41,2025-10-26 04:39:56,2025-10-26 04:39:56,50,3135,True,AirAsia,3,On time,Average,Gate change was confusing and poorly managed. Cabin crew ignored requests.,Maybe
+R_1000014,2025-09-23 13:02:41,2025-09-23 13:38:20,2025-09-23 13:38:20,59,2139,True,AirAsia,3,Delayed,Average,"Lost my luggage, support was unhelpful. Excellent service by cabin crew.",Yes
+R_1000015,2025-10-26 09:03:41,2025-10-26 09:57:50,2025-10-26 09:57:50,69,3249,True,Akasa,3,On time,Good,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,Yes
+R_1000016,2025-09-29 04:57:41,2025-09-29 05:37:24,2025-09-29 05:37:24,58,2383,True,Indigo,5,Delayed,Poor,"Clean cabin, friendly crew, on-time departure. Excellent service by cabin crew.",Maybe
+R_1000017,2025-09-22 07:29:41,2025-09-22 07:48:46,2025-09-22 07:48:46,75,1145,False,Air India,5,Delayed,Average,Pilot provided excellent updates and smooth landing. Crew were polite but slow to respond.,No
+R_1000018,2025-10-24 09:25:41,2025-10-24 09:57:30,2025-10-24 09:57:30,64,1909,True,Air India,3,On time,Good,"Clean cabin, friendly crew, on-time departure. Excellent service by cabin crew.",Yes
+R_1000019,2025-09-13 17:51:41,2025-09-13 18:41:00,2025-09-13 18:41:00,65,2959,True,Air India,2,On time,Average,Seats were uncomfortable and dirty. Crew went above and beyond to help elderly passenger.,Maybe
+R_1000020,2025-10-21 11:10:41,2025-10-21 11:26:18,2025-10-21 11:26:18,76,937,True,AirAsia,5,On time,Good,Loved the in-flight entertainment. Crew seemed stressed and inattentive.,Yes
+R_1000021,2025-09-16 02:30:41,2025-09-16 03:16:40,2025-09-16 03:16:40,53,2759,False,Vistara,4,On time,Poor,"Smooth flight, would travel again. Crew were polite but slow to respond.",Maybe
+R_1000022,2025-10-08 03:59:41,2025-10-08 04:55:20,2025-10-08 04:55:20,61,3339,True,Air India,3,On time,Average,Loved the in-flight entertainment. Cabin crew ignored requests.,No
+R_1000023,2025-09-30 00:28:41,2025-09-30 00:34:49,2025-09-30 00:34:49,98,368,False,Akasa,2,Delayed,Good,Delay of three hours without updates is unacceptable. Excellent service by cabin crew.,Yes
+R_1000024,2025-10-14 06:35:41,2025-10-14 07:09:50,2025-10-14 07:09:50,74,2049,False,Air India,5,Cancelled,Average,"Smooth flight, would travel again. Cabin crew ignored requests.",No
+R_1000025,2025-10-03 05:54:41,2025-10-03 06:24:33,2025-10-03 06:24:33,97,1792,False,Air India,3,On time,Excellent,Crew handled the medical emergency professionally. Crew was attentive and friendly.,Maybe
+R_1000026,2025-10-05 19:50:41,2025-10-05 19:55:35,2025-10-05 19:55:35,82,294,True,Akasa,4,Cancelled,Excellent,"Smooth flight, would travel again. Excellent service by cabin crew.",Yes
+R_1000027,2025-09-13 12:27:41,2025-09-13 13:09:18,2025-09-13 13:09:18,88,2497,True,AirAsia,5,On time,Excellent,Crew were very helpful. Excellent service by cabin crew.,Maybe
+R_1000028,2025-09-14 17:51:41,2025-09-14 18:21:18,2025-09-14 18:21:18,75,1777,True,Vistara,3,Delayed,Good,"Smooth flight, would travel again. Cabin crew ignored requests.",Maybe
+R_1000029,2025-10-04 14:07:41,2025-10-04 14:39:53,2025-10-04 14:39:53,84,1932,True,Indigo,1,Delayed,Good,Delay of three hours without updates is unacceptable. Excellent service by cabin crew.,Maybe
+R_1000030,2025-10-01 10:06:41,2025-10-01 10:16:43,2025-10-01 10:16:43,95,602,True,Indigo,5,On time,Average,Crew were very helpful. Cabin crew ignored requests.,Maybe
+R_1000031,2025-10-25 10:15:41,2025-10-25 10:17:13,2025-10-25 10:17:13,97,92,True,AirAsia,2,Delayed,Good,Delay of three hours without updates is unacceptable. Crew went above and beyond to help elderly passenger.,No
+R_1000032,2025-10-02 22:16:41,2025-10-02 22:58:58,2025-10-02 22:58:58,81,2537,True,AirAsia,3,Delayed,Average,"Clean cabin, friendly crew, on-time departure. Crew went above and beyond to help elderly passenger.",Yes
+R_1000033,2025-09-15 16:23:41,2025-09-15 17:07:59,2025-09-15 17:07:59,60,2658,False,Vistara,1,On time,Poor,Ground staff were rude during boarding. Cabin crew ignored requests.,Maybe
+R_1000034,2025-10-16 05:03:41,2025-10-16 05:42:58,2025-10-16 05:42:58,73,2357,True,Indigo,2,Delayed,Good,Delay of three hours without updates is unacceptable. Cabin crew ignored requests.,No
+R_1000035,2025-09-18 21:10:41,2025-09-18 21:14:32,2025-09-18 21:14:32,93,231,True,Vistara,5,Delayed,Good,"Clean cabin, friendly crew, on-time departure. Crew was attentive and friendly.",Maybe
+R_1000036,2025-09-16 15:19:41,2025-09-16 15:44:49,2025-09-16 15:44:49,76,1508,False,Akasa,5,Cancelled,Excellent,"Clean cabin, friendly crew, on-time departure. Cabin crew ignored requests.",Yes
+R_1000037,2025-10-07 12:26:41,2025-10-07 13:21:05,2025-10-07 13:21:05,74,3264,False,AirAsia,5,Delayed,Excellent,"Smooth flight, would travel again. Crew went above and beyond to help elderly passenger.",No
+R_1000038,2025-09-27 12:40:41,2025-09-27 12:55:18,2025-09-27 12:55:18,51,877,False,Vistara,3,Delayed,Good,"Lost my luggage, support was unhelpful. Cabin crew ignored requests.",No
+R_1000039,2025-10-07 03:51:41,2025-10-07 04:11:42,2025-10-07 04:11:42,51,1201,True,Vistara,4,On time,Excellent,Pilot provided excellent updates and smooth landing. Crew were polite but slow to respond.,No
+R_1000040,2025-09-23 12:51:41,2025-09-23 13:32:19,2025-09-23 13:32:19,77,2438,True,Indigo,2,On time,Excellent,Ground staff were rude during boarding. Crew were polite but slow to respond.,No
+R_1000041,2025-09-24 14:00:41,2025-09-24 14:19:04,2025-09-24 14:19:04,73,1103,True,AirAsia,4,On time,Poor,"Clean cabin, friendly crew, on-time departure. Excellent service by cabin crew.",Yes
+R_1000042,2025-10-07 08:05:41,2025-10-07 08:49:13,2025-10-07 08:49:13,92,2612,True,AirAsia,5,Delayed,Poor,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,No
+R_1000043,2025-10-13 21:49:41,2025-10-13 22:38:16,2025-10-13 22:38:16,89,2915,True,Akasa,2,On time,Average,"Lost my luggage, support was unhelpful. Crew seemed stressed and inattentive.",No
+R_1000044,2025-10-27 03:45:41,2025-10-27 04:43:35,2025-10-27 04:43:35,91,3474,True,Vistara,3,On time,Average,Crew handled the medical emergency professionally. Excellent service by cabin crew.,No
+R_1000045,2025-10-17 11:51:41,2025-10-17 12:22:52,2025-10-17 12:22:52,68,1871,True,Akasa,4,Cancelled,Average,"Smooth flight, would travel again. Crew were polite but slow to respond.",Yes
+R_1000046,2025-09-28 15:50:41,2025-09-28 16:37:36,2025-09-28 16:37:36,89,2815,True,Air India,5,On time,Excellent,Loved the in-flight entertainment. Crew was attentive and friendly.,No
+R_1000047,2025-10-15 00:07:41,2025-10-15 00:51:40,2025-10-15 00:51:40,98,2639,True,AirAsia,5,On time,Excellent,"Smooth flight, would travel again. Cabin crew ignored requests.",No
+R_1000048,2025-09-27 04:49:41,2025-09-27 05:02:41,2025-09-27 05:02:41,79,780,False,Indigo,4,Cancelled,Average,"Clean cabin, friendly crew, on-time departure. Crew was attentive and friendly.",No
+R_1000049,2025-10-23 05:28:41,2025-10-23 05:58:48,2025-10-23 05:58:48,90,1807,False,Air India,5,On time,Average,"Clean cabin, friendly crew, on-time departure. Crew went above and beyond to help elderly passenger.",Maybe
+R_1000050,2025-10-21 09:23:41,2025-10-21 10:07:28,2025-10-21 10:07:28,70,2627,True,Vistara,4,Delayed,Excellent,Pilot provided excellent updates and smooth landing. Cabin crew ignored requests.,Yes
+R_1000051,2025-09-21 00:15:41,2025-09-21 00:32:28,2025-09-21 00:32:28,71,1007,False,AirAsia,3,On time,Poor,Loved the in-flight entertainment. Crew seemed stressed and inattentive.,No
+R_1000052,2025-09-12 22:47:41,2025-09-12 23:02:48,2025-09-12 23:02:48,74,907,False,SpiceJet,5,On time,Poor,Crew were very helpful. Crew were polite but slow to respond.,Yes
+R_1000053,2025-10-09 07:11:41,2025-10-09 07:33:04,2025-10-09 07:33:04,64,1283,False,SpiceJet,4,Delayed,Average,Loved the in-flight entertainment. Excellent service by cabin crew.,No
+R_1000054,2025-10-21 11:40:41,2025-10-21 11:43:39,2025-10-21 11:43:39,58,178,False,Vistara,5,Delayed,Excellent,Loved the in-flight entertainment. Crew were polite but slow to respond.,No
+R_1000055,2025-09-09 17:58:41,2025-09-09 18:05:24,2025-09-09 18:05:24,63,403,False,Air India,5,On time,Poor,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,No
+R_1000056,2025-10-08 00:02:41,2025-10-08 00:55:38,2025-10-08 00:55:38,51,3177,False,Vistara,5,Delayed,Excellent,Loved the in-flight entertainment. Crew went above and beyond to help elderly passenger.,No
+R_1000057,2025-09-27 16:35:41,2025-09-27 17:21:03,2025-09-27 17:21:03,89,2722,True,AirAsia,1,On time,Good,Delay of three hours without updates is unacceptable. Cabin crew ignored requests.,Yes
+R_1000058,2025-09-18 18:30:41,2025-09-18 19:04:00,2025-09-18 19:04:00,60,1999,True,Akasa,5,On time,Excellent,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,Yes
+R_1000059,2025-10-05 14:14:41,2025-10-05 14:23:03,2025-10-05 14:23:03,54,502,True,Vistara,4,Cancelled,Good,"Clean cabin, friendly crew, on-time departure. Crew seemed stressed and inattentive.",Yes
+R_1000060,2025-10-04 17:35:41,2025-10-04 18:34:43,2025-10-04 18:34:43,54,3542,True,Akasa,5,On time,Average,Pilot provided excellent updates and smooth landing. Crew seemed stressed and inattentive.,Yes
+R_1000061,2025-10-15 12:23:41,2025-10-15 13:20:49,2025-10-15 13:20:49,77,3428,False,Indigo,4,On time,Good,"Clean cabin, friendly crew, on-time departure. Crew seemed stressed and inattentive.",Maybe
+R_1000062,2025-10-24 18:32:41,2025-10-24 19:18:05,2025-10-24 19:18:05,96,2724,True,Akasa,5,On time,Average,Loved the in-flight entertainment. Crew seemed stressed and inattentive.,No
+R_1000063,2025-09-29 15:03:41,2025-09-29 16:01:23,2025-09-29 16:01:23,92,3462,True,Vistara,5,On time,Poor,Crew were very helpful. Crew seemed stressed and inattentive.,No
+R_1000064,2025-09-09 21:27:41,2025-09-09 22:02:25,2025-09-09 22:02:25,88,2084,True,Air India,4,On time,Average,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,Maybe
+R_1000065,2025-09-08 04:56:41,2025-09-08 05:32:57,2025-09-08 05:32:57,65,2176,True,Indigo,3,On time,Poor,Pilot provided excellent updates and smooth landing. Excellent service by cabin crew.,Maybe
+R_1000066,2025-10-21 22:58:41,2025-10-21 23:30:16,2025-10-21 23:30:16,92,1895,True,Indigo,3,On time,Average,"Smooth flight, would travel again. Cabin crew ignored requests.",No
+R_1000067,2025-10-25 14:34:41,2025-10-25 14:59:09,2025-10-25 14:59:09,66,1468,False,AirAsia,4,On time,Good,Pilot provided excellent updates and smooth landing. Crew seemed stressed and inattentive.,Yes
+R_1000068,2025-09-24 19:28:41,2025-09-24 19:51:13,2025-09-24 19:51:13,97,1352,True,AirAsia,4,Delayed,Poor,"Clean cabin, friendly crew, on-time departure. Cabin crew ignored requests.",No
+R_1000069,2025-10-25 00:51:41,2025-10-25 01:33:25,2025-10-25 01:33:25,50,2504,True,Indigo,5,On time,Good,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,No
+R_1000070,2025-09-11 10:11:41,2025-09-11 10:16:24,2025-09-11 10:16:24,86,283,True,AirAsia,5,Delayed,Average,"Smooth flight, would travel again. Crew seemed stressed and inattentive.",No
+R_1000071,2025-10-20 20:32:41,2025-10-20 21:03:45,2025-10-20 21:03:45,75,1864,True,Air India,5,On time,Poor,"Smooth flight, would travel again. Crew seemed stressed and inattentive.",Yes
+R_1000072,2025-09-12 03:52:41,2025-09-12 04:04:02,2025-09-12 04:04:02,98,681,True,Akasa,5,On time,Poor,Crew were very helpful. Cabin crew ignored requests.,Maybe
+R_1000073,2025-09-27 19:47:41,2025-09-27 20:41:38,2025-09-27 20:41:38,86,3237,False,SpiceJet,5,On time,Excellent,Pilot provided excellent updates and smooth landing. Excellent service by cabin crew.,Maybe
+R_1000074,2025-09-16 07:32:41,2025-09-16 08:25:45,2025-09-16 08:25:45,61,3184,True,AirAsia,3,Delayed,Excellent,"Lost my luggage, support was unhelpful. Cabin crew ignored requests.",Yes
+R_1000075,2025-09-07 12:36:41,2025-09-07 13:05:34,2025-09-07 13:05:34,94,1733,False,AirAsia,4,On time,Poor,Pilot provided excellent updates and smooth landing. Cabin crew ignored requests.,Yes
+R_1000076,2025-09-28 12:41:41,2025-09-28 13:00:44,2025-09-28 13:00:44,54,1143,True,SpiceJet,2,On time,Excellent,"Lost my luggage, support was unhelpful. Cabin crew ignored requests.",Yes
+R_1000077,2025-10-05 06:45:41,2025-10-05 07:27:18,2025-10-05 07:27:18,82,2497,True,SpiceJet,2,Delayed,Poor,Ground staff were rude during boarding. Crew were polite but slow to respond.,No
+R_1000078,2025-09-14 14:29:41,2025-09-14 15:11:30,2025-09-14 15:11:30,93,2509,True,SpiceJet,5,Delayed,Excellent,"Clean cabin, friendly crew, on-time departure. Crew was attentive and friendly.",Maybe
+R_1000079,2025-10-01 19:31:41,2025-10-01 20:12:01,2025-10-01 20:12:01,77,2420,True,Air India,4,Delayed,Poor,Crew were very helpful. Crew went above and beyond to help elderly passenger.,Yes
+R_1000080,2025-10-20 01:31:41,2025-10-20 01:56:26,2025-10-20 01:56:26,76,1485,False,Vistara,3,On time,Poor,Delay of three hours without updates is unacceptable. Cabin crew ignored requests.,No
+R_1000081,2025-10-13 17:34:41,2025-10-13 18:31:13,2025-10-13 18:31:13,82,3392,True,SpiceJet,2,On time,Excellent,Flight arrived late and no clear communication from staff. Crew was attentive and friendly.,Maybe
+R_1000082,2025-10-26 16:04:41,2025-10-26 16:37:13,2025-10-26 16:37:13,78,1952,False,Indigo,3,On time,Excellent,Food was cold and portions small. Crew seemed stressed and inattentive.,Yes
+R_1000083,2025-10-01 14:09:41,2025-10-01 14:48:10,2025-10-01 14:48:10,65,2309,True,Vistara,4,Delayed,Good,Crew were very helpful. Crew was attentive and friendly.,No
+R_1000084,2025-09-08 12:38:41,2025-09-08 13:17:23,2025-09-08 13:17:23,57,2322,False,Indigo,3,Delayed,Good,Gate change was confusing and poorly managed. Crew was attentive and friendly.,No
+R_1000085,2025-10-03 20:20:41,2025-10-03 20:56:25,2025-10-03 20:56:25,59,2144,True,SpiceJet,5,Very delayed,Poor,Crew were very helpful. Cabin crew ignored requests.,Yes
+R_1000086,2025-10-23 13:02:41,2025-10-23 13:54:37,2025-10-23 13:54:37,100,3116,True,Indigo,3,Delayed,Average,Delay of three hours without updates is unacceptable. Crew seemed stressed and inattentive.,Yes
+R_1000087,2025-10-03 00:38:41,2025-10-03 01:29:14,2025-10-03 01:29:14,80,3033,True,Akasa,4,Delayed,Average,Crew were very helpful. Cabin crew ignored requests.,No
+R_1000088,2025-10-26 17:54:41,2025-10-26 18:21:26,2025-10-26 18:21:26,64,1605,False,Vistara,5,Very delayed,Poor,Loved the in-flight entertainment. Cabin crew ignored requests.,Yes
+R_1000089,2025-10-06 05:50:41,2025-10-06 06:42:31,2025-10-06 06:42:31,81,3110,False,AirAsia,5,On time,Excellent,"Clean cabin, friendly crew, on-time departure. Crew were polite but slow to respond.",Yes
+R_1000090,2025-10-23 00:02:41,2025-10-23 00:43:58,2025-10-23 00:43:58,96,2477,True,Indigo,5,On time,Good,"Smooth flight, would travel again. Excellent service by cabin crew.",No
+R_1000091,2025-09-21 07:58:41,2025-09-21 08:04:47,2025-09-21 08:04:47,71,366,False,Vistara,3,Delayed,Poor,"Seats were comfortable, food was okay. Crew were polite but slow to respond.",No
+R_1000092,2025-10-21 16:42:41,2025-10-21 17:20:37,2025-10-21 17:20:37,77,2276,True,Akasa,2,Delayed,Excellent,Delay of three hours without updates is unacceptable. Crew went above and beyond to help elderly passenger.,Maybe
+R_1000093,2025-09-16 10:19:41,2025-09-16 10:50:58,2025-09-16 10:50:58,53,1877,True,AirAsia,3,On time,Average,Pilot provided excellent updates and smooth landing. Crew went above and beyond to help elderly passenger.,No
+R_1000094,2025-10-11 09:37:41,2025-10-11 10:08:05,2025-10-11 10:08:05,55,1824,True,Air India,4,On time,Poor,"Clean cabin, friendly crew, on-time departure. Cabin crew ignored requests.",Maybe
+R_1000095,2025-09-29 04:52:41,2025-09-29 05:27:39,2025-09-29 05:27:39,79,2098,True,Air India,4,On time,Average,"Smooth flight, would travel again. Crew went above and beyond to help elderly passenger.",Maybe
+R_1000096,2025-10-27 00:49:41,2025-10-27 01:01:28,2025-10-27 01:01:28,94,707,True,SpiceJet,5,Very delayed,Average,Loved the in-flight entertainment. Crew went above and beyond to help elderly passenger.,No
+R_1000097,2025-10-04 18:45:41,2025-10-04 19:00:16,2025-10-04 19:00:16,94,875,False,SpiceJet,2,On time,Average,Ground staff were rude during boarding. Crew went above and beyond to help elderly passenger.,Yes
+R_1000098,2025-10-13 07:25:41,2025-10-13 07:45:25,2025-10-13 07:45:25,68,1184,True,Akasa,5,Delayed,Good,Loved the in-flight entertainment. Crew was attentive and friendly.,Maybe
+R_1000099,2025-10-09 08:25:41,2025-10-09 08:41:38,2025-10-09 08:41:38,58,957,True,Akasa,3,Delayed,Excellent,Food was cold and portions small. Crew were polite but slow to respond.,Maybe
+R_1000100,2025-09-10 20:53:41,2025-09-10 21:15:46,2025-09-10 21:15:46,97,1325,False,Indigo,4,Delayed,Poor,Pilot provided excellent updates and smooth landing. Crew was attentive and friendly.,Yes
+R_1000101,2025-09-25 13:24:41,2025-09-25 13:34:42,2025-09-25 13:34:42,68,601,True,Akasa,4,On time,Average,Loved the in-flight entertainment. Cabin crew ignored requests.,Yes
+R_1000102,2025-10-19 21:51:41,2025-10-19 21:57:49,2025-10-19 21:57:49,73,368,True,Air India,5,Delayed,Excellent,Crew were very helpful. Crew seemed stressed and inattentive.,No
+R_1000103,2025-09-08 13:10:41,2025-09-08 13:29:44,2025-09-08 13:29:44,90,1143,True,SpiceJet,4,Delayed,Average,Loved the in-flight entertainment. Crew went above and beyond to help elderly passenger.,Yes
+R_1000104,2025-09-28 13:33:41,2025-09-28 14:06:52,2025-09-28 14:06:52,90,1991,True,Akasa,5,On time,Poor,"Smooth flight, would travel again. Excellent service by cabin crew.",Maybe
+R_1000105,2025-10-04 18:54:41,2025-10-04 19:40:00,2025-10-04 19:40:00,56,2719,False,Indigo,2,Cancelled,Good,Delay of three hours without updates is unacceptable. Crew went above and beyond to help elderly passenger.,Maybe
+R_1000106,2025-09-19 15:07:41,2025-09-19 15:35:12,2025-09-19 15:35:12,97,1651,False,Vistara,5,Delayed,Good,Crew were very helpful. Excellent service by cabin crew.,No
+R_1000107,2025-09-16 07:04:41,2025-09-16 08:02:35,2025-09-16 08:02:35,63,3474,False,Akasa,4,Very delayed,Poor,Pilot provided excellent updates and smooth landing. Crew was attentive and friendly.,No
+R_1000108,2025-09-28 18:33:41,2025-09-28 19:33:04,2025-09-28 19:33:04,75,3563,True,Indigo,5,On time,Average,"Smooth flight, would travel again. Crew were polite but slow to respond.",Yes
+R_1000109,2025-09-18 09:37:41,2025-09-18 10:36:34,2025-09-18 10:36:34,100,3533,False,Indigo,5,Delayed,Average,"Smooth flight, would travel again. Excellent service by cabin crew.",Yes
+R_1000110,2025-09-18 17:51:41,2025-09-18 18:46:24,2025-09-18 18:46:24,71,3283,True,Indigo,5,On time,Good,"Clean cabin, friendly crew, on-time departure. Excellent service by cabin crew.",Maybe
