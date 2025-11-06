@@ -22,6 +22,62 @@ nltk.download("vader_lexicon", download_dir="./nltk_data", quiet=True)
 # Tell NLTK to look in the local directory
 nltk.data.path.append("./nltk_data")
 
+
+# ------------------ Dual-mode Sentiment Engine (Hugging Face + VADER) ------------------
+import os
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+from pathlib import Path
+MODEL_NAME = "distilbert-base-uncased-finetuned-sst-2-english"
+LOCAL_MODEL_DIR = os.path.join(".", "models", "distilbert-sentiment")
+
+def prepare_hf_pipeline(local_dir=LOCAL_MODEL_DIR, model_name=MODEL_NAME):
+    """
+    Attempts to load a locally cached model first. If missing, tries to download and cache
+    the model into local_dir so future runs are offline-capable. Returns (pipeline_obj, mode_str).
+    """
+    Path(local_dir).mkdir(parents=True, exist_ok=True)
+    # Try loading from local folder first
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(local_dir, local_files_only=True)
+        model = AutoModelForSequenceClassification.from_pretrained(local_dir, local_files_only=True)
+        pipe = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+        return pipe, "HuggingFace (local)"
+    except Exception:
+        pass
+    # Try downloading and saving into local_dir
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        # save to local dir for offline reuse
+        tokenizer.save_pretrained(local_dir)
+        model.save_pretrained(local_dir)
+        pipe = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+        return pipe, "HuggingFace (downloaded)"
+    except Exception as e:
+        # Could not load HF model (no internet or missing dependencies)
+        return None, None
+
+# Initialize analyzer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+analyzer = SentimentIntensityAnalyzer()
+
+# Prepare pipeline silently
+hf_pipeline_obj, hf_mode = prepare_hf_pipeline()
+
+if hf_pipeline_obj is not None:
+    sentiment_engine = "huggingface"
+    sentiment_pipeline = hf_pipeline_obj
+    hf_status = f"✅ Sentiment Analysis Active — Running in Hugging Face Mode ({hf_mode})"
+else:
+    sentiment_engine = "vader"
+    sentiment_pipeline = None
+    hf_status = "✅ Sentiment Analysis Active — Running in VADER Mode (Offline)"
+# Display the status cleanly in the sidebar (no warnings)
+with st.sidebar:
+    st.markdown("<small style='color:green;'>"+hf_status+"</small>", unsafe_allow_html=True)
+# --------------------------------------------------------------------------------------
+
+
 # Initialize the sentiment analyzer
 sia = SentimentIntensityAnalyzer()
 
@@ -100,7 +156,7 @@ mode = st.radio("Choose Mode", ["⚡ Basic Sentiment", "🧬 NLP Pipeline Demo"]
 # 🤖 Load Hugging Face Pipeline
 try:
     hf_pipeline = pipeline("sentiment-analysis")
-    huggingface_available = True
+    huggingface_available = True  # placeholder
 except Exception:
     huggingface_available = False
 
@@ -347,7 +403,7 @@ if "airline" not in df.columns:
 # 🧠 Sentiment Analysis
 try:
     sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-    huggingface_available = True
+    huggingface_available = True  # placeholder
 except Exception:
     st.warning("⚠️ Hugging Face model failed. Switching to VADER fallback...")
     huggingface_available = False
@@ -556,13 +612,12 @@ st.markdown("""
 
 st.markdown("""
 <div style='text-align: center; font-size: 16px; font-weight: bold; color: #000000;'>
-🛠️ Version: v1.0 | 📅 Last Updated: November 2025
+🛠️ Version: v1.0 | 📅 Last Updated: October 2025
 </div>
 """, unsafe_allow_html=True)
 
 
 
                                  
-
 
 
