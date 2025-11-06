@@ -368,22 +368,6 @@ if "date" in df.columns:
         )
         st.plotly_chart(fig_trend, use_container_width=True)
 
-        # 🎯 NPS Scoring + Trendline
-if "NPS" in df.columns:
-    st.markdown("### 🎯 NPS Score Trend")
-    df["NPS_Category"] = df["NPS"].apply(lambda x: "Promoter" if x >= 9 else "Passive" if x >= 7 else "Detractor")
-    promoters = (df["NPS_Category"] == "Promoter").sum()
-    detractors = (df["NPS_Category"] == "Detractor").sum()
-    total_responses = len(df)
-    nps_score = ((promoters - detractors) / total_responses) * 100
-    st.metric("Net Promoter Score (NPS)", f"{nps_score:.1f}")
-
-    if "date" in df.columns:
-        nps_trend = df.groupby("date")["NPS"].mean().reset_index()
-        fig_nps = px.line(nps_trend, x="date", y="NPS", title="📈 Average NPS Over Time")
-        st.plotly_chart(fig_nps, use_container_width=True)
-
-
         # 📈 Rolling Average Sentiment Trend
         st.markdown("### 📈 Smoothed Sentiment Trend (7-Day Rolling Avg)")
         rolling_df = df.groupby(["date", "sentiment"]).size().unstack().fillna(0)
@@ -483,41 +467,6 @@ if neg_text.strip():
 else:
     st.info("No negative sentiment found for this airline.")
 
-# 🧩 Theme Clustering using BERTopic
-st.markdown("### 🧩 Theme Clustering (BERTopic)")
-
-try:
-    from bertopic import BERTopic
-    from sklearn.feature_extraction.text import CountVectorizer
-
-    sample_texts = df[selected_text_col].dropna().astype(str).tolist()
-    if len(sample_texts) > 30:
-        st.info("🧠 Generating topics using BERTopic (may take a moment)...")
-        topic_model = BERTopic(verbose=False)
-        topics, _ = topic_model.fit_transform(sample_texts)
-        topic_freq = topic_model.get_topic_info()
-        st.dataframe(topic_freq.head(10))
-        fig_topics = topic_model.visualize_barchart(top_n_topics=5)
-        st.plotly_chart(fig_topics, use_container_width=True)
-    else:
-        st.warning("Not enough text data to run BERTopic clustering.")
-except Exception as e:
-    st.warning(f"⚠️ BERTopic unavailable or dependency issue: {e}")
-
-# 🧭 CX Journey Segmentation
-st.markdown("### 🧭 CX Journey Segmentation")
-
-if "date" in df.columns and "sentiment" in df.columns:
-    df["journey_phase"] = pd.cut(df["date"].rank(method="first"),
-                                 bins=3, labels=["Pre-Flight", "In-Flight", "Post-Flight"])
-    phase_sentiment = df.groupby(["journey_phase", "sentiment"]).size().reset_index(name="count")
-    fig_phase = px.bar(phase_sentiment, x="journey_phase", y="count", color="sentiment",
-                       title="CX Journey Sentiment Segmentation", barmode="group")
-    st.plotly_chart(fig_phase, use_container_width=True)
-else:
-    st.info("Add a 'date' column to enable CX journey segmentation.")
-
-
 # ⚠️ CX Alert Section
 st.markdown("### ⚠️ CX Alert")
 neg_count = sentiment_counts.get("NEGATIVE", 0)
@@ -525,29 +474,6 @@ if neg_count > 10:
     st.error(f"🚨 Spike in negative sentiment detected for {selected_airline}. Investigate recent feedback.")
 else:
     st.success("✅ No major negative sentiment spike detected.")
-
-# 📤 Export to PDF Summary Report
-st.markdown("### 📤 Export Summary Report")
-
-from fpdf import FPDF
-
-if st.button("Generate PDF Report"):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(200, 10, txt="Airline Sentiment Summary Report", ln=True, align="C")
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, txt=f"Selected Airline: {selected_airline}")
-    pdf.multi_cell(0, 10, txt=f"Total Records: {len(df)}")
-    if "NPS" in df.columns:
-        pdf.multi_cell(0, 10, txt=f"NPS Score: {nps_score:.1f}")
-    pdf.multi_cell(0, 10, txt="Top 5 Topics / Themes:")
-    if "topic_model" in locals():
-        top_topics = topic_model.get_topic_info().head(5).to_string(index=False)
-        pdf.multi_cell(0, 10, txt=top_topics)
-    pdf.output("CX_Summary_Report.pdf")
-    st.success("✅ PDF report generated successfully! Check your project folder.")
-
 
 # 📌 Footer Branding
 st.markdown("---")
@@ -571,6 +497,8 @@ st.markdown("""
 🛠️ Version: v1.0 | 📅 Last Updated: October 2025
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
