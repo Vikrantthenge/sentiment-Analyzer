@@ -4,6 +4,7 @@
 [![Location](https://img.shields.io/badge/Mumbai-based-6c757d?logo=googlemaps)](https://www.google.com/maps/place/Mumbai)  
 [![Recruiter](https://img.shields.io/badge/Recruiter-Facing-0078D4?logo=target)](https://www.linkedin.com/in/vthenge)  
 [![CX](https://img.shields.io/badge/CX-Intelligence-00C853?logo=insights)](https://sentiment-analyzer-vikrant.streamlit.app)
+[![Survey](https://img.shields.io/badge/Qualtrics-Integrated-darkred?logo=qualtrics)](https://sentiment-analyzer-vikrant.streamlit.app)
 
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-vthenge-blue?logo=linkedin)](https://www.linkedin.com/in/vthenge)  
@@ -31,6 +32,7 @@
 
 A recruiter-facing NLP dashboard built with Streamlit to analyze airline customer feedback.  
 It applies sentiment analysis to passenger reviews and visualizes trends for CX teams, route planners, and service recovery leads.
+Compatible with CSV uploads and Qualtrics survey exports, enabling recruiter and passenger feedback loops.
 
 ---
 
@@ -47,6 +49,8 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 🧬 **NLP Pipeline Demo** with tokenization, lemmatization, entity recognition  
 ☁️ **Word Cloud of Lemmas** for theme discovery  
 📊 **POS Tag Distribution** chart for linguistic breakdown
+🧾 Qualtrics-Compatible for survey-based sentiment analysis and recruiter feedback integration
+
 
 ---
 
@@ -66,6 +70,7 @@ It applies sentiment analysis to passenger reviews and visualizes trends for CX 
 ![spaCy](https://img.shields.io/badge/spaCy-NLP-blue?logo=spacy)
 ![WordCloud](https://img.shields.io/badge/WordCloud-Visuals-lightgrey?logo=python)
 ![Pandas](https://img.shields.io/badge/Pandas-Wrangling-black?logo=pandas)
+![Qualtrics](https://img.shields.io/badge/Qualtrics-Survey%20Analytics-darkred?style=flat-square&logo=qualtrics&logoColor=white)
 
 ---
 
