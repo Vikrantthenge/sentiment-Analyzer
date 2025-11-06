@@ -261,22 +261,84 @@ with st.sidebar:
     st.info("📌 Tip: Upload a CSV with a column like 'text', 'review', or 'comments' containing customer feedback.")
 
 # 📂 File Upload or Default
-st.markdown("### 📄 Upload Your Own CSV or Use Default Demo File")
-DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
+# ===========================================================
+# 💠 QUALTRICS COMPATIBILITY SECTION (DEFAULT: bundled demo CSV)
+# ===========================================================
 
-uploaded_file = st.file_uploader("Upload airline-reviews.csv", type=["csv"])
+st.markdown("### 💠 Qualtrics-Compatible Data Import (Demo bundled)")
+
+def load_qualtrics_csv(file):
+    try:
+        # If file is a Streamlit UploadedFile, it behaves like a file-like object
+        # We'll try to read normally first
+        df_try = pd.read_csv(file)
+        # Detect Qualtrics export pattern: often has a first header row like 'StartDate' etc.
+        cols0 = df_try.columns.tolist()
+        if len(cols0) > 0 and (str(cols0[0]).lower().startswith("startdate") or "responseid" in [c.lower() for c in cols0]):
+            # Rewind and re-read skipping the first two metadata rows (common in Qualtrics exports)
+            try:
+                file.seek(0)
+            except Exception:
+                pass
+            df = pd.read_csv(file, skiprows=[0,1])
+            st.info("💡 Detected Qualtrics survey format. Automatically cleaned headers.")
+            return df
+        return df_try
+    except Exception as e:
+        st.error(f"❌ Could not read Qualtrics CSV: {e}")
+        return None
+
+# Use bundled demo CSV as default so the app loads visuals immediately
+import os
+BUNDLED_QUALTRICS_CSV = "/mnt/data/qualtrics_airline_feedback.csv"
+
+uploaded_file = st.file_uploader("Upload airline-reviews.csv or Qualtrics export", type=["csv"])
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.success("✅ Custom file uploaded successfully.")
+    df = load_qualtrics_csv(uploaded_file)
+    if df is not None:
+        st.success("✅ File uploaded successfully (Qualtrics-compatible).")
+    else:
+        st.stop()
 else:
     try:
-        df = pd.read_csv(DEFAULT_CSV_URL)
-        st.info("ℹ️ Using default demo file from GitHub")
+        df = pd.read_csv(BUNDLED_QUALTRICS_CSV, skiprows=[0,1])
+        st.info("ℹ️ Using bundled Qualtrics-style demo file (Qualtrics-Compatible Mode)")
     except Exception:
-        st.error("❌ Default file not found. Please upload a CSV file.")
-        st.stop()
+        # Fallback to original remote demo if bundled file missing
+        try:
+            DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
+            df = pd.read_csv(DEFAULT_CSV_URL)
+            st.info("ℹ️ Using default demo file from GitHub")
+        except Exception:
+            st.error("❌ Default file not found. Please upload a CSV file.")
+            st.stop()
 
-st.write("📁 Active file:", uploaded_file.name if uploaded_file else "airline-reviews.csv")
+st.write("📁 Active file:", uploaded_file.name if uploaded_file else os.path.basename(BUNDLED_QUALTRICS_CSV))
+
+# Quick visual confirmation for stakeholders/recruiters
+if df is not None:
+    st.markdown("### 📊 Qualtrics Demo Preview (Auto-loaded)")
+    preview_cols = df.columns[:6] if len(df.columns) > 6 else df.columns
+    st.dataframe(df[preview_cols].head(10))
+
+    qualtrics_cols = [c for c in df.columns if any(x in c.lower() for x in ['responseid','duration','progress','finished'])]
+    if qualtrics_cols:
+        st.markdown("### ⏱️ Survey Metadata Summary")
+        meta_summary = df[qualtrics_cols].describe(include='all').T
+        st.dataframe(meta_summary)
+
+    text_cols = [c for c in df.columns if any(x in c.lower() for x in ['text','comment','feedback','open'])]
+    rating_cols = [c for c in df.columns if any(x in c.lower() for x in ['satisfaction','rating','score'])]
+
+    if rating_cols:
+        st.markdown("### ⭐ Average Ratings (Demo)")
+        avg_scores = df[rating_cols].mean(numeric_only=True)
+        fig = px.bar(x=avg_scores.index, y=avg_scores.values, title="Average Survey Ratings (Qualtrics Demo)", labels={"x":"Question","y":"Average Score"}, color=avg_scores.values)
+        st.plotly_chart(fig, use_container_width=True)
+    elif text_cols:
+        st.markdown("### 💬 Sample Open-Ended Responses")
+        st.write(df[text_cols[0]].dropna().head(7))
+# ===========================================================
 
 # ✈️ Simulate airline column if missing
 if "airline" not in df.columns:
@@ -475,84 +537,6 @@ if neg_count > 10:
 else:
     st.success("✅ No major negative sentiment spike detected.")
 
-# ===========================================================
-# 💠 QUALTRICS COMPATIBILITY SECTION
-# ===========================================================
-
-st.markdown("### 💠 Qualtrics-Compatible Data Import")
-
-def load_qualtrics_csv(file):
-    try:
-        # Try reading normally first
-        df = pd.read_csv(file)
-        # Detect Qualtrics format (metadata rows start with 'StartDate' in row 1)
-        if df.columns[0].startswith("StartDate") or "ResponseId" in df.columns:
-            # Re-read, skipping first two metadata rows (common in Qualtrics exports)
-            file.seek(0)
-            df = pd.read_csv(file, skiprows=[0, 1])
-            st.info("💡 Detected Qualtrics survey format. Automatically cleaned headers.")
-        return df
-    except Exception as e:
-        st.error(f"❌ Could not read Qualtrics CSV: {e}")
-        return None
-
-# Replace standard upload handling
-DEFAULT_CSV_URL = "https://raw.githubusercontent.com/Vikrantthenge/sentiment-Analyzer/main/airline-reviews.csv"
-
-uploaded_file = st.file_uploader("Upload airline-reviews.csv or Qualtrics export", type=["csv"])
-if uploaded_file is not None:
-    df = load_qualtrics_csv(uploaded_file)
-    if df is not None:
-        st.success("✅ File uploaded successfully (Qualtrics-compatible).")
-        # 🧭 Quick Preview for Qualtrics Data
-if df is not None:
-    st.markdown("### 📊 Qualtrics Data Preview")
-    preview_cols = df.columns[:6] if len(df.columns) > 6 else df.columns
-    st.dataframe(df[preview_cols].head(10))
-
-    # If Qualtrics metadata columns detected, visualize response completeness
-    qualtrics_cols = [c for c in df.columns if any(x in c.lower() for x in ["responseid", "duration", "progress", "finished"])]
-    if qualtrics_cols:
-        st.markdown("### ⏱️ Survey Metadata Summary")
-        meta_summary = df[qualtrics_cols].describe(include='all').T
-        st.dataframe(meta_summary)
-
-    # Simple visualization for Qualtrics satisfaction or text responses
-    text_cols = [c for c in df.columns if any(x in c.lower() for x in ["text", "comment", "feedback", "open"])]
-    rating_cols = [c for c in df.columns if any(x in c.lower() for x in ["satisfaction", "rating", "score"])]
-
-    if rating_cols:
-        st.markdown("### ⭐ Average Satisfaction (from Qualtrics Ratings)")
-        avg_scores = df[rating_cols].mean(numeric_only=True)
-        fig = px.bar(
-            x=avg_scores.index, y=avg_scores.values,
-            title="Average Survey Ratings (Qualtrics Export)",
-            labels={"x": "Question", "y": "Average Score"},
-            color=avg_scores.values
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-    elif text_cols:
-        st.markdown("### 💬 Sample Open-Ended Responses")
-        st.write(df[text_cols[0]].dropna().head(5))
-
-    else:
-        st.stop()
-else:
-    try:
-        df = pd.read_csv(DEFAULT_CSV_URL)
-        st.info("ℹ️ Using default demo file from GitHub")
-    except Exception:
-        st.error("❌ Default file not found. Please upload a CSV file.")
-        st.stop()
-
-# Add badge in sidebar
-with st.sidebar:
-    st.markdown("### 💠 Qualtrics-Compatible ✅")
-    st.markdown("This app can process **Qualtrics survey exports** directly (auto-detects and cleans headers).")
-
-# ===========================================================
-
 # 📌 Footer Branding
 st.markdown("---")
 st.markdown("**✈️ From Runways to Regression Models — Aviation Expertise Meets Data Intelligence.**")
@@ -578,5 +562,6 @@ st.markdown("""
 
 
 
-                            
+                                 
+
 
