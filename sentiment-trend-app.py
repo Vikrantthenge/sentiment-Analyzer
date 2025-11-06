@@ -556,12 +556,13 @@ st.markdown("""
 
 st.markdown("""
 <div style='text-align: center; font-size: 16px; font-weight: bold; color: #000000;'>
-🛠️ Version: v1.0 | 📅 Last Updated: October 2025
+🛠️ Version: v1.0 | 📅 Last Updated: November 2025
 </div>
 """, unsafe_allow_html=True)
 
 
 
                                  
+
 
 
